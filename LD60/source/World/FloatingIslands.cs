@@ -1,3 +1,4 @@
+using ChaosFramework.Components;
 using ChaosFramework.Graphics.Colors;
 using ChaosFramework.Graphics.OpenGl.Lights;
 using ChaosFramework.Input;
@@ -16,15 +17,20 @@ namespace LD60.World
         public readonly Hostility hostility;
         public readonly Map map;
 
+        bool needOverlay = true;
+
         public FloatingIslands(Game game)
             : base (game)
         {
-            sun = new DirectionalLight(
+            sun = new(
                 deferredShader,
                 new Vector3f(0.5f, -1, 1),
                 new Rgba(0.9f, 0.9f, 0.9f, 1) * Confix.instance.brightness
-                );
-            sun.ambient = new Rgba(0.1f, 0.1f, 0.1f, 1) * Confix.instance.brightness;
+                )
+            {
+                ambient = new Rgba(0.1f, 0.1f, 0.1f, 1) * Confix.instance.brightness
+            };
+
             lights.Add(sun);
 
             map = new Map(game);
@@ -42,8 +48,28 @@ namespace LD60.World
 
         public override void SetUpdateCalls()
         {
+            if (needOverlay)
+                CreateOverlay();
+
             base.SetUpdateCalls();
             game.input.AddKeyDownHandler(InputLayer.Game, Pause);
+        }
+
+        void CreateOverlay()
+        {
+            needOverlay = false;
+
+            DisposablesList<Scene> scenes = [];
+            foreach (Scene s in game.scenes)
+            {
+                scenes.Add(s);
+                if (s == this)
+                    scenes.Add(new Overlay(game.menuContext));
+            }
+
+            game.scenes.Clear();
+            foreach(Scene s in scenes)
+                game.scenes.Add(s);
         }
 
         bool Pause(InputPushEvent<Keyboard.Key> e)

@@ -10,9 +10,9 @@ using ChaosFramework.Physics;
 using ChaosFramework.Shapes.Convex;
 using ChaosFramework.Shapes.Rigging;
 using ChaosUtil.Primitives;
-using static ChaosFramework.Math.Exponentials;
-using static ChaosFramework.Math.Constants;
 using LD60.Menu;
+using static ChaosFramework.Math.Constants;
+using static ChaosFramework.Math.Exponentials;
 
 namespace LD60.World.Enemies
 {
