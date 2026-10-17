@@ -106,21 +106,21 @@ namespace LD60
             async Task LoadShaders()
             {
                 shaderCode = new ShaderCodeContainer(new StreamSourceCollection(archive, StreamSources.shaderCode));
-                await shaderCode.LoadAllAsync(@"^effects/.*\.c?fx$", this);
+                await shaderCode.LoadAllAsync(@"^*\.c?fx$", this);
                 await (shaders = new ShaderContainer(archive, graphics, shaderCode, monitoring, graphics.coreProfile))
-                    .LoadAllAsync(@"^effects/.*\.(fx|cfx)$", this);
+                    .LoadAllAsync(@"^*\.(fx|cfx)$", this);
             }
             RunTasks(
-                (textures = new TextureContainer(archive, graphics.dispatcher, monitoring)).LoadAllAsync(@"^textures/.*\.png$", this)
-                    .ContinueWith(_ => (materials = new MaterialContainer(archive, graphics, textures, monitoring)).LoadAllAsync(@"^meshes/.*\.mat$", this)),
+                (textures = new TextureContainer(archive, graphics.dispatcher, monitoring)).LoadAllAsync(@"^.*\.png$", this)
+                    .ContinueWith(_ => (materials = new MaterialContainer(archive, graphics, textures, monitoring)).LoadAllAsync(@"^*\.mat$", this)),
                 (meshes = new MeshContainer(archive, graphics.dispatcher, monitoring))
-                    .LoadAllAsync(MeshLoadFlags.Default, @"^meshes/.*\.gmdl$", this)
-                    .ContinueWith(_ => meshes.LoadAll(MeshLoadFlags.Animated, @"^meshes/.*\.agmdl$", this))
+                    .LoadAllAsync(MeshLoadFlags.Default, @"^*\.gmdl$", this)
+                    .ContinueWith(_ => meshes.LoadAll(MeshLoadFlags.Animated, @"^*\.agmdl$", this))
                     .ContinueWith(_ => meshes.AddFactory(SPRITE, _ => new Mesh(graphics.dispatcher, MeshData.sprite)))
                     .ContinueWith(_ => meshes.Load(SPRITE, this)),
-                (animations = new AnimationContainer(archive, monitoring)).LoadAllAsync(@"^meshes/.*\.anim$", this),
-                (samples = new SoundDataContainer(archive, monitoring)).LoadAllAsync(@"^sounds/.*\.(wav|ogg)$", this),
-                (shapes = new ShapeContainer(archive)).LoadAllAsync(@"^meshes/.*\.obj$", this),
+                (animations = new AnimationContainer(archive, monitoring)).LoadAllAsync(@"^*\.anim$", this),
+                (samples = new SoundDataContainer(archive, monitoring)).LoadAllAsync(@"^*\.(wav|ogg)$", this),
+                (shapes = new ShapeContainer(archive)).LoadAllAsync(@"^*\.obj$", this),
                 (fonts = new FontContainer(archive, graphics, monitoring)).LoadAllAsync(@"^fonts/.*\.chf2$", this),
                 Task.Run(() => language = new LanguagePack(archive, "english", "english")),
                 LoadShaders()

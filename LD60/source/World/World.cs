@@ -1,7 +1,6 @@
 using ChaosFramework.Collections;
 using ChaosFramework.Collections.Immutable;
 using ChaosFramework.Components;
-using ChaosFramework.Core;
 using ChaosFramework.Graphics.OpenGl;
 using ChaosFramework.Graphics.OpenGl.AssetContainers;
 using ChaosFramework.Graphics.OpenGl.ChaosShader;

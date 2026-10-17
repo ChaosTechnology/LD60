@@ -6,14 +6,13 @@ using ChaosFramework.Input.InputEvents;
 using ChaosFramework.Math.Vectors;
 using ChaosFramework.Physics;
 using ChaosFramework.Shapes.Convex;
-using LD60.World.Transparents;
 using static ChaosFramework.Math.Constants;
 using static ChaosFramework.Math.Exponentials;
 using static ChaosFramework.Math.Trigonometry;
 
 namespace LD60.World
 {
-    [DefaultInstancer(1, "models/cube.gmdl", null)]
+    [Instancing.DefaultInstancer(1, "models/cube.gmdl", null)]
     public class Player : Component<FloatingIslands>, Instancable
     {
         const float VIEW_DISTANCE = 5.0f;
@@ -23,7 +22,6 @@ namespace LD60.World
         const float MOVEMENT_SPEED = 6.66f;
 
         Physical physics;
-        ParticleFire.Spawner particleFire;
         float viewAngle = 0;
 
         protected override void Create(CreateParameters cparams)
@@ -41,12 +39,6 @@ namespace LD60.World
             physics.state.velocity.z = -2.5f;
 
             scene.instancers.GetOrCreateManager(typeof(Player)).instancedThings.Add(this);
-            particleFire = AddComponent<ParticleFire.Spawner>();
-            particleFire.particleSize = 0.666f;
-            particleFire.particleLifeTime = 3.0f;
-            particleFire.spawnInterval = 0.01f;
-            particleFire.spawnShape = physics.shapes[0];
-            particleFire.spawnOnShapeOnly = true;
         }
 
         public override void SetUpdateCalls()
@@ -54,7 +46,6 @@ namespace LD60.World
             base.SetUpdateCalls();
             scene.updateLayers[(int)UpdateLayers.SetCamera].Add(UpdateCamera);
             scene.updateLayers[(int)UpdateLayers.Move].Add(Move);
-            scene.updateLayers[(int)UpdateLayers.PostCollision].Add(SetFirePosition);
             scene.game.input.AddMouseMoveHandler(InputLayer.Game, PivotCamera);
         }
 
@@ -91,12 +82,6 @@ namespace LD60.World
             physics.state.velocity.x += delta.x;
             physics.state.velocity.z += delta.y;
             physics.state.Move(ftime);
-        }
-
-        void SetFirePosition()
-        {
-            particleFire.velocity = physics.state.velocity;
-            particleFire.position = physics.state.position;
         }
 
         void UpdateCamera()

@@ -13,12 +13,13 @@ using ChaosFramework.Graphics.OpenGl.Text;
 using ChaosFramework.Math;
 using ChaosFramework.Math.Vectors;
 using ChaosFramework.Platform;
+using LD60.Instancing;
 using OpenTK.Graphics.OpenGL;
 using static ChaosFramework.Math.Clamping;
 
 namespace LD60.World
 {
-    public abstract class WorldScene : Scene<Game>
+    public abstract class WorldScene : Scene<Game>, InstancingHost
     {
         public const float GRAVITY = -9.81f;
 
@@ -32,7 +33,7 @@ namespace LD60.World
         public TransparencyRenderer transparency;
         public Transparents.ParticleFire fire;
 
-        public readonly InstancingManagerContainer<WorldScene> instancers;
+        public readonly InstancingManagerContainer<InstancingHost> instancers;
         public readonly ChaosFramework.Graphics.OpenGl.PostProcessors.AntiAliasing antiAliasing = new();
 
         public readonly LinkedList<Text> hudTexts, worldTexts, materialTexts;
@@ -44,6 +45,8 @@ namespace LD60.World
         public Texture postprocessingTexture => postprocessingFBO.textures[0];
 
         protected bool takeScreenshot = false;
+
+        Scene InstancingHost.scene => this;
 
         public WorldScene(Game game, int width = -1, int height = -1) : base(game, typeof(UpdateLayers), typeof(DrawLayers))
         {
@@ -81,7 +84,7 @@ namespace LD60.World
             antiAliasing.normalFactor = 6f;
             antiAliasing.positionFactor = .6f;
 
-            instancers = new InstancingManagerContainer<WorldScene>(this, game.graphics);
+            instancers = new InstancingManagerContainer<InstancingHost>(this, game.graphics);
             instancers.CreateInstancers(typeof(WorldScene).Assembly);
 
             postprocessingFBO = new Framebuffer(deferredShader.width, deferredShader.height, [
@@ -148,7 +151,7 @@ namespace LD60.World
             }
         }
 
-        Framebuffer oeld;
+        Framebuffer oldFb;
         public override void SetDrawCalls()
         {
             foreach (var textList in textLists)
@@ -158,11 +161,11 @@ namespace LD60.World
 
             drawLayers[(int)DrawLayers.StoreFrameBuffer].Add(() =>
             {
-                oeld = game.graphics.stateTracker.GetFramebuffer(FramebufferTarget.Framebuffer);
+                oldFb = game.graphics.stateTracker.GetFramebuffer(FramebufferTarget.Framebuffer);
             });
             drawLayers[(int)DrawLayers.ResetFramebuffer].Insert(0, () =>
             {
-                game.graphics.stateTracker.BindFramebuffer(FramebufferTarget.Framebuffer, oeld);
+                game.graphics.stateTracker.BindFramebuffer(FramebufferTarget.Framebuffer, oldFb);
             });
 
             drawLayers[(int)DrawLayers.BeginWorld].Add(BeginWorld);
@@ -172,7 +175,7 @@ namespace LD60.World
 
             drawLayers[(int)DrawLayers.RenderDeferredShader].Add(() => deferredShader.Render());
             drawLayers[(int)DrawLayers.Transparents].Add(() => transparency.Render(deferredShader));
-            drawLayers[(int)DrawLayers.AntiAliasing].Insert(0, () => ApplyAntiAliasing(oeld));
+            drawLayers[(int)DrawLayers.AntiAliasing].Insert(0, () => ApplyAntiAliasing(oldFb));
 
             foreach (var textList in textLists)
                 drawLayers[(int)textList.Item1].Add(() =>
