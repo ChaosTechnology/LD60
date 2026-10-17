@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Linq;
 using ChaosFramework.Components;
 using ChaosFramework.Graphics.OpenGl.Instancing;
@@ -43,44 +44,83 @@ namespace LD60.World.Enemies
 
         void Move()
         {
+            Vector3f pos = physics.state.position;
             Map.Segment residence = null;
             foreach (Map.Segment segment in scene.map.EnumerateSegments())
-                foreach(Shape q in segment.home.content)
-                    foreach(Shape s in physics.shapes)
-                        if (ChaosFramework.Shapes.Intersection.ConvexHull.CheckIntersection(q, s) != null)
-                            if (residence == null || (residence as Map.Path)?.destination == segment)
+                foreach(Shape segmentShape in segment.home.content)
+                    foreach(Shape homeShape in physics.shapes)
+                        if (ChaosFramework.Shapes.Intersection.ConvexHull.CheckIntersection(segmentShape, homeShape) != null)
+                            if (residence == null
+                                || (residence as Map.Path)?.destination == segment
+                                || residence is Map.Island island && island.outgoing.Any(x => x == segment)
+                                )
                                 residence = segment;
-                            else if ((segment as Map.Path)?.destination == residence)
-                                continue;
+                            else if (residence is Map.Path residencePath && segment is Map.Path segmentPath)
+                            {
+                                float closestPath = float.PositiveInfinity;
+                                foreach(Map.Path y in new[]{residencePath, segmentPath})
+                                    foreach ((Vector3f p, Vector3f _) in y.KeyPoints())
+                                    {
+                                        float d = (p - pos).LengthSq();
+                                        if (d < closestPath)
+                                        {
+                                            closestPath = d;
+                                            residence = y;
+                                        }
+                                    }
+                            }
 
-            if (residence is Map.Path path)
+
+            switch (residence)
             {
-                // TODO: actually follow path
-                interesting = path.end;
-            }
-            else if (residence is Map.Island island)
-            {
-                if (island.outgoing.Any())
-                {
-                    interesting = Vector3f.POSITIVE_INFINITY;
-                    float distOfInteresting = float.PositiveInfinity;
-                    foreach(Map.Path outgoing in island.outgoing)
+                case Map.Path path:
+                    bool found = false;
+                    foreach((Vector3f pos, Vector3f dir) keypoint in path.KeyPoints())
                     {
-                        float d = (outgoing.end -physics.state.position).LengthSq();
-                        if (d < distOfInteresting)
+                        float d = Vector3f.Dot(keypoint.dir, keypoint.pos);
+                        ChaosFramework.Math.Plane p = new(keypoint.dir, d);
+                        if (p.Dot(pos) < 0)
                         {
-                            distOfInteresting = d;
-                            interesting = outgoing.start;
+                            found = true;
+                            interesting = keypoint.pos;
+                            break;
                         }
                     }
-                }
-                else
-                {
-                    interesting = scene.hostility.goal;
-                }
+
+                    if (!found)
+                        interesting = path.KeyPoints().First().pos;
+
+                    break;
+
+                case Map.Island island:
+                    {
+                        if (island.outgoing.Any())
+                        {
+                            interesting = Vector3f.POSITIVE_INFINITY;
+                            float distOfInteresting = float.PositiveInfinity;
+                            foreach (Map.Path outgoing in island.outgoing)
+                            {
+                                float d = (outgoing.end - physics.state.position).LengthSq();
+                                if (d < distOfInteresting)
+                                {
+                                    distOfInteresting = d;
+                                    interesting = outgoing.start;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            interesting = scene.hostility.goal;
+                        }
+
+                        break;
+                    }
+
+                default:
+                    throw new UnreachableException();
             }
 
-            if (interesting.Length() < float.PositiveInfinity)
+            if (interesting.LengthSq() < float.PositiveInfinity)
             {
                 Vector2f fast = Vector2f.Normalize(interesting.xz - physics.state.position.xz) * GOBLIN_MOVE_FAST;
                 physics.state.velocity.xz += (fast - physics.state.velocity.xz) * EaseIn(ftime * 60);

@@ -2,12 +2,12 @@ using System.Linq;
 using ChaosFramework.Collections.Immutable;
 using ChaosFramework.Core;
 using ChaosFramework.Graphics.OpenGl.AssetContainers;
-using ChaosFramework.Math.Vectors;
 using ChaosFramework.Math;
+using ChaosFramework.Math.Vectors;
+using ChaosFramework.Physics;
 using ChaosFramework.Shapes.Convex;
 using ChaosFramework.Shapes.Rigging;
 using SysCol = System.Collections.Generic;
-using ChaosFramework.Physics;
 
 namespace LD60.World
 {
@@ -54,6 +54,16 @@ namespace LD60.World
                 while ((nextBone = endBone.children.SingleOrDefault()) != null)
                     endBone = nextBone;
                 end = endBone.GetPosition() + endBone.GetDirection() * endBone.length;
+            }
+
+            public SysCol.IEnumerable<(Vector3f pos, Vector3f dir)> KeyPoints()
+            {
+                Rig.Bone e = rig.root.children.Single(), n = e;
+                for (; n != null; n = n.children.SingleOrDefault())
+                    yield return ((e = n).GetPosition(), e.GetDirection());
+
+                Vector3f d = e.GetDirection();
+                yield return (e.GetPosition() + d * e.length, d);
             }
         }
 
