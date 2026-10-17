@@ -14,6 +14,7 @@ namespace LD60.World
         readonly Menu.PauseMenu pause;
 
         public readonly Hostility hostility;
+        public readonly Map map;
 
         public FloatingIslands(Game game)
             : base (game)
@@ -26,6 +27,7 @@ namespace LD60.World
             sun.ambient = new Rgba(0.1f, 0.1f, 0.1f, 1) * Confix.instance.brightness;
             lights.Add(sun);
 
+            map = new Map(game);
             hostility = AddComponent<Hostility>();
 
             AddComponent<World>();
@@ -55,6 +57,12 @@ namespace LD60.World
             {
                 return false;
             }
+        }
+
+        protected override void DoDispose()
+        {
+            base.DoDispose();
+            map.Dispose();
         }
     }
 }

@@ -1,13 +1,10 @@
 using ChaosFramework.Collections;
-using ChaosFramework.Collections.Immutable;
 using ChaosFramework.Components;
 using ChaosFramework.Graphics.OpenGl;
 using ChaosFramework.Graphics.OpenGl.AssetContainers;
 using ChaosFramework.Graphics.OpenGl.ChaosShader;
-using ChaosFramework.IO.Streams;
 using ChaosFramework.Math;
 using ChaosFramework.Physics;
-using ChaosFramework.Shapes.Convex;
 using OpenTK.Graphics.OpenGL;
 
 namespace LD60.World
@@ -15,7 +12,6 @@ namespace LD60.World
     class World : Component<FloatingIslands>
     {
         Physical physics;
-        ImmutableArray<MeshContainer.Entry> meshes;
 
         protected override void Create(CreateParameters c)
         {
@@ -26,13 +22,8 @@ namespace LD60.World
             scene.physics.Add(physics);
 
             LinkedList<MeshContainer.Entry> meshes = [];
-            foreach (string island in scene.game.archive.EnumerateKeys("models/world/*.*.gmdl"))
-            {
-                MeshContainer.Entry mesh = scene.game.meshes.Load(island, this);
-                meshes.Add(mesh);
-                physics.AddShape(new MeshShape([.. mesh.content.data.pos]));
-            }
-            this.meshes = meshes.ToArray();
+            foreach (Map.Segment segment in scene.map.EnumerateSegments())
+                physics.AddShape(segment.shapes);
         }
 
         public override void SetDrawCalls()
@@ -55,11 +46,11 @@ namespace LD60.World
             scene.game.graphics.defaultMaterial.content.SetValues(shader);
 
             Shader.SemanticMapping semanticMapping = shader.BeginPass(pass);
-            foreach(MeshContainer.Entry mesh in meshes)
+            foreach(Map.Segment segment in scene.map.EnumerateSegments())
             {
-                GL.BindVertexArray(mesh.content.GetOrCreateVao(semanticMapping));
+                GL.BindVertexArray(segment.mesh.content.GetOrCreateVao(semanticMapping));
                 Graphics.ThrowErrors();
-                mesh.content.Draw(shader, pass);
+                segment.mesh.content.Draw(shader, pass);
             }
             shader.EndPass();
         }
