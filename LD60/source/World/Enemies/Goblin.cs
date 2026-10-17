@@ -13,6 +13,8 @@ using ChaosUtil.Primitives;
 using LD60.Menu;
 using static ChaosFramework.Math.Constants;
 using static ChaosFramework.Math.Exponentials;
+using static ChaosFramework.Math.Clamping;
+using static ChaosFramework.Math.Trigonometry;
 
 namespace LD60.World.Enemies
 {
@@ -21,6 +23,7 @@ namespace LD60.World.Enemies
     [Instancing.AnimatedInstancer(666, "models/goblin/goblin.agmdl", "models/goblin/goblin.3.mat")]
     public class Goblin : Component<FloatingIslands>, Instancable
     {
+        const float MAX_TURNING_RADIANS_PER_SECOND = 2.0f;
         static readonly float GOBLIN_MOVE_FAST = 3;
 
         public readonly Physical physics;
@@ -141,7 +144,11 @@ namespace LD60.World.Enemies
             if ((physics.state.position - scene.hostility.goal).LengthSq() < 1)
                 new Death(scene).ShowDialog(null, null);
 
-            facingAngle = (float)System.Math.Atan2(physics.state.velocity.x, physics.state.velocity.z);
+            float target = (float)System.Math.Atan2(physics.state.velocity.x, physics.state.velocity.z);
+            float difference = (float)System.Math.Atan2(Sin(target - facingAngle), Cos(target - facingAngle));
+            float step = Clamp(-MAX_TURNING_RADIANS_PER_SECOND * ftime, MAX_TURNING_RADIANS_PER_SECOND * ftime, difference);
+            facingAngle += step;
+
             physics.state.baseTransform = Matrix.RotationY(facingAngle + PI);
             physics.state.Move(ftime);
             rig.ClearAnimations();
