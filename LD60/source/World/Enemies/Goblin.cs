@@ -1,9 +1,12 @@
 using System.Linq;
 using ChaosFramework.Components;
+using ChaosFramework.Graphics.OpenGl.AssetContainers;
 using ChaosFramework.Graphics.OpenGl.Instancing;
+using ChaosFramework.Graphics.OpenGl.Model;
 using ChaosFramework.Math.Vectors;
 using ChaosFramework.Physics;
 using ChaosFramework.Shapes.Convex;
+using ChaosFramework.Shapes.Rigging;
 using ChaosUtil.Primitives;
 using static ChaosFramework.Math.Exponentials;
 
@@ -21,6 +24,9 @@ namespace LD60.World.Enemies
         readonly int kind = Random.instance.RndInt(3);
 
         Vector3f interesting = Vector3f.NAN;
+        Rig rig;
+        AnimationContainer.Entry animation;
+        float walkProgress;
 
         public Goblin()
         {
@@ -31,6 +37,8 @@ namespace LD60.World.Enemies
         protected override void Create(CreateParameters _)
         {
             scene.physics.Add(physics);
+            rig = Rig.FromStream(scene.game.archive.OpenRead("models/goblin/goblin.rig"));
+            animation = scene.game.animations.Load("models/goblin/goblin.anim", this);
             scene.instancers[typeof(Goblin)].instancedThings.Add(this);
         }
 
@@ -90,6 +98,9 @@ namespace LD60.World.Enemies
                 Dispose();
 
             physics.state.Move(ftime);
+            rig.ClearAnimations();
+            walkProgress = (walkProgress + ftime * physics.state.velocity.xz.Length()) % 1;
+            animation.content["Walk"].SetAnimationData(rig, walkProgress);
         }
 
         void ConsiderSuicide()
@@ -99,7 +110,10 @@ namespace LD60.World.Enemies
         }
 
         void Instancable.GiveMeInstances(InstancingAttribute[] instancers)
-            => instancers[kind].informer.AddInstance(physics.state.GetTransform());
+        {
+            Instancing.AnimatedInstancer animInstancer = (Instancing.AnimatedInstancer)instancers[kind];
+            animInstancer.AddInstance(rig.GetBoneTransforms(animInstancer.animesh), physics.state.GetTransform());
+        }
 
         bool Instancable.NeedsInstancedDraw()
             => true; // TODO: out of screen
