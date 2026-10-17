@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Linq;
 using ChaosFramework.Components;
 using ChaosFramework.Graphics.OpenGl.AssetContainers;
@@ -132,7 +131,8 @@ namespace LD60.World.Enemies
                     }
 
                 default:
-                    throw new UnreachableException();
+                    interesting = scene.hostility.goal;
+                    break;
             }
 
             if (interesting.LengthSq() < float.PositiveInfinity)
