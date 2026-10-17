@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Build ChaosTemplates.Game3D and restore/build all required dependencies.
+# Build LD60 and restore/build all required dependencies.
 
 set -euo pipefail
 
@@ -9,4 +9,4 @@ cd "$SolutionDir"
 
 SolutionDir="$SolutionDir" bash -c 'dotnet build "./submodules/ChaosBuild.CodeFormatter.Tasks/"'
 SolutionDir="$SolutionDir" bash -c 'dotnet build "./submodules/ChaosFrameworkBuild.ArchiveCreator/"'
-SolutionDir="$SolutionDir" bash -c 'dotnet build "./ChaosTemplates.Game3D.sln"'
+SolutionDir="$SolutionDir" bash -c 'dotnet build "./LD60.sln"'
