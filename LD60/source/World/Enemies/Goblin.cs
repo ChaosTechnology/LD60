@@ -4,12 +4,14 @@ using ChaosFramework.Components;
 using ChaosFramework.Graphics.OpenGl.AssetContainers;
 using ChaosFramework.Graphics.OpenGl.Instancing;
 using ChaosFramework.Graphics.OpenGl.Model;
+using ChaosFramework.Math;
 using ChaosFramework.Math.Vectors;
 using ChaosFramework.Physics;
 using ChaosFramework.Shapes.Convex;
 using ChaosFramework.Shapes.Rigging;
 using ChaosUtil.Primitives;
 using static ChaosFramework.Math.Exponentials;
+using static ChaosFramework.Math.Constants;
 
 namespace LD60.World.Enemies
 {
@@ -28,6 +30,7 @@ namespace LD60.World.Enemies
         Rig rig;
         AnimationContainer.Entry animation;
         float walkProgress;
+        float facingAngle = 0;
 
         public Goblin()
         {
@@ -137,6 +140,8 @@ namespace LD60.World.Enemies
             if ((physics.state.position - scene.hostility.goal).LengthSq() < 1)
                 Dispose();
 
+            facingAngle = (float)System.Math.Atan2(physics.state.velocity.x, physics.state.velocity.z);
+            physics.state.baseTransform = Matrix.RotationY(facingAngle + PI);
             physics.state.Move(ftime);
             rig.ClearAnimations();
             walkProgress = (walkProgress + ftime * physics.state.velocity.xz.Length()) % 1;
