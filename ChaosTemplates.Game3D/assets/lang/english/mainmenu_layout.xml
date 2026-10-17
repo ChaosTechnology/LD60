@@ -1,0 +1,56 @@
+<Root>
+    <DefineMacro id="MainMenuButton">
+        <Arg name="cell"/>
+        <Arg name="margin"/>
+        <Arg name="textSource"/>
+        <Arg name="color"/>
+        <Code>
+            <Layout.FlowPanel
+                Grid.index="0,{cell}"
+                Grid.marginLeft="{margin}"
+                Grid.align="Left"
+                margin="0"
+                direction="ltr"
+                align="Center"
+                height="0.25"
+                >
+                <Button id="btn_{textSource}"
+                    FlowPanel.autoScaleMode="Stretch"
+                    width="0.75"
+                    textColor="0.8,0.2,0.2,0.666"
+                    hoverTextColor="1,1,1,0.666"
+                    textAlign="Left"
+                    textMarginLeft="0.05"
+                    textMarginBottom="0.01"
+                    textureSource="textures\menu\button.png"
+                    textSource="mainmenu_text#Root/Text[@id='{textSource}']"
+                    color="{color}"
+                    />
+            </Layout.FlowPanel>
+        </Code>
+    </DefineMacro>
+
+    <Main margin="0">
+        <Layout.Grid columns="2" rows="1" margin="0">
+            <Column index="0" width="2"/>
+            <Image Grid.index="0,0" textureSource="textures\menu\mainmenu\fade.png"/>
+
+            <Layout.Grid rows="5" columns="1" Grid.index="0,0">
+                <Row index="0" height="0.666"/>
+                <Row index="4" height="0.1"/>
+
+                <Layout.FlowPanel Grid.index="0,0" direction="ltr" align="Center">
+                    <Image
+                        ratioMode="KeepRatio"
+                        FlowPanel.autoScaleMode="Stretch"
+                        textureSource="textures\menu\mainmenu\logo.png"
+                        />
+                </Layout.FlowPanel>
+
+                <Macro id="MainMenuButton"><Args margin="0.30" cell="1" color="1.1, 0.6, 0.2, 1.666" textSource="Play"/></Macro>
+                <Macro id="MainMenuButton"><Args margin="0.20" cell="2" color="0.1, 0.8, 1.1, 1" textSource="Settings"/></Macro>
+                <Macro id="MainMenuButton"><Args margin="0.10" cell="3" color="0.8, 0.3, 0.2, 1.66" textSource="Exit"/></Macro>
+            </Layout.Grid>
+        </Layout.Grid>
+    </Main>
+</Root>
