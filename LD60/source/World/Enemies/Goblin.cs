@@ -12,6 +12,7 @@ using ChaosFramework.Shapes.Rigging;
 using ChaosUtil.Primitives;
 using static ChaosFramework.Math.Exponentials;
 using static ChaosFramework.Math.Constants;
+using LD60.Menu;
 
 namespace LD60.World.Enemies
 {
@@ -138,7 +139,7 @@ namespace LD60.World.Enemies
             }
 
             if ((physics.state.position - scene.hostility.goal).LengthSq() < 1)
-                Dispose();
+                new Death(scene).ShowDialog(null, null);
 
             facingAngle = (float)System.Math.Atan2(physics.state.velocity.x, physics.state.velocity.z);
             physics.state.baseTransform = Matrix.RotationY(facingAngle + PI);

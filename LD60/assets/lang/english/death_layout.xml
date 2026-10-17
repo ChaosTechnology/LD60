@@ -1,0 +1,35 @@
+<Root>
+    <DefineMacro id="DeathButton">
+        <Arg name="cell"/>
+        <Arg name="textSource"/>
+        <Code>
+            <Button id="btn_{textSource}"
+                Grid.index="0,{cell}"
+                textAlign="Center"
+                textColor="0.6,0.6,0.6,0.666"
+                hoverTextColor="1,1,1,0.666"
+                textureSource=""
+                textSource="death_text#Root/Text[@id='{textSource}']"
+                />
+        </Code>
+    </DefineMacro>
+
+    <Death margin="0">
+        <Layout.Grid columns="1" rows="5" margin="0">
+            <Row index="0" height="0.666"/>
+            <Row index="4" height="0.1"/>
+
+            <Button
+                Grid.index="0,0"
+                textAlign="Center"
+                textColor="0.8,0.2,0.2,0.666"
+                hoverTextColor="0.8,0.2,0.2,0.666"
+                textureSource=""
+                textSource="death_text#Root/Text[@id='Death']"
+                />
+            <Macro id="DeathButton"><Args cell="1" textSource="TryAgain"/></Macro>
+            <Macro id="DeathButton"><Args cell="2" textSource="MainMenu"/></Macro>
+            <Macro id="DeathButton"><Args cell="3" textSource="Exit"/></Macro>
+        </Layout.Grid>
+    </Death>
+</Root>
