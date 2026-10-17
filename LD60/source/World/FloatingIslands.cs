@@ -7,7 +7,7 @@ using LD60.Input;
 
 namespace LD60.World
 {
-    public class TemplateWorld : WorldScene
+    public class FloatingIslands : WorldScene
     {
         public readonly DirectionalLight sun;
 
@@ -15,7 +15,7 @@ namespace LD60.World
 
         public readonly Hostility hostility;
 
-        public TemplateWorld(Game game)
+        public FloatingIslands(Game game)
             : base (game)
         {
             sun = new DirectionalLight(

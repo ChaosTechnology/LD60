@@ -13,7 +13,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace LD60.World
 {
-    class World : Component<TemplateWorld>
+    class World : Component<FloatingIslands>
     {
         Physical physics;
         ImmutableArray<MeshContainer.Entry> meshes;

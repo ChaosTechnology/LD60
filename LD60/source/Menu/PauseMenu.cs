@@ -8,10 +8,10 @@ using SysCol = System.Collections.Generic;
 
 namespace LD60.Menu
 {
-    public class PauseMenu(World.TemplateWorld world)
+    public class PauseMenu(World.FloatingIslands world)
         : Menu<PauseMenu>(world.game.menuContext, "pausemenu_layout", "Root/Pause")
     {
-        readonly World.TemplateWorld world = world;
+        readonly World.FloatingIslands world = world;
 
         bool closeRequested = false;
 

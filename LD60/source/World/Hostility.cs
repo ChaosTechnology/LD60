@@ -8,7 +8,7 @@ using SysCol = System.Collections.Generic;
 
 namespace LD60.World
 {
-    public class Hostility : Component<TemplateWorld>
+    public class Hostility : Component<FloatingIslands>
     {
         public Vector3f goal {get; private set;}
         public ImmutableArray<Vector3f> spawns {get; private set;}

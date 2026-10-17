@@ -14,7 +14,7 @@ using static ChaosFramework.Math.Trigonometry;
 namespace LD60.World
 {
     [DefaultInstancer(1, "models/cube.gmdl", null)]
-    public class Player : Component<TemplateWorld>, Instancable
+    public class Player : Component<FloatingIslands>, Instancable
     {
         const float VIEW_DISTANCE = 5.0f;
         const float VIEW_HEIGHT = 2.8f;

@@ -20,7 +20,7 @@ namespace LD60.Menu
         void Play(Control _)
         {
             Dispose();
-            game.scenes.Add(new World.TemplateWorld(g));
+            game.scenes.Add(new World.FloatingIslands(g));
         }
 
         void Settings(Control _)
