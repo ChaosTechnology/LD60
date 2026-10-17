@@ -17,16 +17,18 @@ namespace LD60.Input
                 inputs[(int)Inputs.Pause].Add(keyboard[Keyboard.HidUsage.Escape]);
 
                 // walk with WASD
-                inputs[(int)Inputs.WalkForward].Add(keyboard[Keyboard.HidUsage.W]);
-                inputs[(int)Inputs.WalkLeft].Add(keyboard[Keyboard.HidUsage.A]);
-                inputs[(int)Inputs.WalkBack].Add(keyboard[Keyboard.HidUsage.S]);
-                inputs[(int)Inputs.WalkRight].Add(keyboard[Keyboard.HidUsage.D]);
+                inputs[(int)Inputs.PanForward].Add(keyboard[Keyboard.HidUsage.W]);
+                inputs[(int)Inputs.PanLeft].Add(keyboard[Keyboard.HidUsage.A]);
+                inputs[(int)Inputs.PanBack].Add(keyboard[Keyboard.HidUsage.S]);
+                inputs[(int)Inputs.PanRight].Add(keyboard[Keyboard.HidUsage.D]);
+                inputs[(int)Inputs.TurnCamCw].Add(keyboard[Keyboard.HidUsage.Q]);
+                inputs[(int)Inputs.TurnCamCcw].Add(keyboard[Keyboard.HidUsage.E]);
 
                 // walk with arrow keys
-                inputs[(int)Inputs.WalkForward].Add(keyboard[Keyboard.HidUsage.ArrowUp]);
-                inputs[(int)Inputs.WalkLeft].Add(keyboard[Keyboard.HidUsage.ArrowLeft]);
-                inputs[(int)Inputs.WalkBack].Add(keyboard[Keyboard.HidUsage.ArrowDown]);
-                inputs[(int)Inputs.WalkRight].Add(keyboard[Keyboard.HidUsage.ArrowRight]);
+                inputs[(int)Inputs.PanForward].Add(keyboard[Keyboard.HidUsage.ArrowUp]);
+                inputs[(int)Inputs.PanLeft].Add(keyboard[Keyboard.HidUsage.ArrowLeft]);
+                inputs[(int)Inputs.PanBack].Add(keyboard[Keyboard.HidUsage.ArrowDown]);
+                inputs[(int)Inputs.PanRight].Add(keyboard[Keyboard.HidUsage.ArrowRight]);
             }
         }
 

@@ -2,10 +2,12 @@ namespace LD60.Input
 {
     public enum Inputs
     {
-        WalkLeft,
-        WalkRight,
-        WalkForward,
-        WalkBack,
+        PanLeft,
+        PanRight,
+        PanForward,
+        PanBack,
+        TurnCamCcw,
+        TurnCamCw,
         Pause,
     }
 }
