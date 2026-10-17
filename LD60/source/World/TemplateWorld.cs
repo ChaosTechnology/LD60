@@ -13,6 +13,8 @@ namespace LD60.World
 
         readonly Menu.PauseMenu pause;
 
+        public readonly Hostility hostility;
+
         public TemplateWorld(Game game)
             : base (game)
         {
@@ -24,8 +26,11 @@ namespace LD60.World
             sun.ambient = new Rgba(0.1f, 0.1f, 0.1f, 1) * Confix.instance.brightness;
             lights.Add(sun);
 
+            hostility = AddComponent<Hostility>();
+
             AddComponent<World>();
             AddComponent<Skybox>();
+            AddComponent<Player>();
 
             pause = new Menu.PauseMenu(this)
             {

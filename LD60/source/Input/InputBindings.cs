@@ -1,5 +1,5 @@
-using ChaosFramework.Input;
 using System.Collections.Generic;
+using ChaosFramework.Input;
 
 namespace LD60.Input
 {

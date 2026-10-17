@@ -1,16 +1,22 @@
-using ChaosFramework.Math;
+using ChaosFramework.Collections;
+using ChaosFramework.Collections.Immutable;
 using ChaosFramework.Components;
-using ChaosFramework.Graphics.OpenGl.Instancing;
-using ChaosFramework.Physics;
 using ChaosFramework.Core;
+using ChaosFramework.Graphics.OpenGl;
+using ChaosFramework.Graphics.OpenGl.AssetContainers;
+using ChaosFramework.Graphics.OpenGl.ChaosShader;
+using ChaosFramework.IO.Streams;
+using ChaosFramework.Math;
+using ChaosFramework.Physics;
 using ChaosFramework.Shapes.Convex;
+using OpenTK.Graphics.OpenGL;
 
 namespace LD60.World
 {
-    [DefaultInstancer(1, "models/cube.gmdl", null)]
-    class World : Component<TemplateWorld>, Instancable
+    class World : Component<TemplateWorld>
     {
         Physical physics;
+        ImmutableArray<MeshContainer.Entry> meshes;
 
         protected override void Create(CreateParameters c)
         {
@@ -19,26 +25,44 @@ namespace LD60.World
             physics.isStatic = true;
             physics.shapes.Clear();
             scene.physics.Add(physics);
-            using (Disposable x = new())
-                physics.AddShape(new MeshShape([.. scene.game.meshes.Load("models/cube.gmdl", x).content.data.pos]));
-            physics.state.position.y = -5;
-            physics.state.baseTransform = Matrix.Scaling(50, 1, 50);
 
-            scene.instancers.GetOrCreateManager(typeof(World)).instancedThings.Add(this);
-
-            AddComponent<Player>();
+            LinkedList<MeshContainer.Entry> meshes = [];
+            foreach (string island in scene.game.archive.EnumerateKeys("models/world/*.*.gmdl"))
+            {
+                MeshContainer.Entry mesh = scene.game.meshes.Load(island, this);
+                meshes.Add(mesh);
+                physics.AddShape(new MeshShape([.. mesh.content.data.pos]));
+            }
+            this.meshes = meshes.ToArray();
         }
 
-        void Instancable.GiveMeInstances(InstancingAttribute[] instancers)
-            => instancers[0].informer.AddInstance(physics.state.GetTransform());
-
-        bool Instancable.NeedsInstancedDraw()
-            => true;
-
-        protected override void DoDispose()
+        public override void SetDrawCalls()
         {
-            scene.instancers[typeof(World)].instancedThings.Remove(this);
-            base.DoDispose();
+            base.SetDrawCalls();
+            scene.drawLayers[(int)DrawLayers.World].Add(DrawWorld);
+            scene.drawLayers[(int)DrawLayers.Material].Add(DrawMaterial);
+        }
+
+        void DrawWorld()
+            => Draw("World");
+
+        void DrawMaterial()
+            => Draw("Material");
+
+        void Draw(string pass)
+        {
+            ShaderContainer.Entry shader = scene.game.graphics.shaders.normalMap;
+            scene.view.SetValues(shader, Matrix.IDENTITY, Matrix.IDENTITY);
+            scene.game.graphics.defaultMaterial.content.SetValues(shader);
+
+            Shader.SemanticMapping semanticMapping = shader.BeginPass(pass);
+            foreach(MeshContainer.Entry mesh in meshes)
+            {
+                GL.BindVertexArray(mesh.content.GetOrCreateVao(semanticMapping));
+                Graphics.ThrowErrors();
+                mesh.content.Draw(shader, pass);
+            }
+            shader.EndPass();
         }
     }
 }

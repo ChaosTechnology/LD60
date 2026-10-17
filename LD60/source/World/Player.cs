@@ -8,13 +8,13 @@ using ChaosFramework.Physics;
 using ChaosFramework.Shapes.Convex;
 using LD60.World.Transparents;
 using static ChaosFramework.Math.Constants;
-using static ChaosFramework.Math.Trigonometry;
 using static ChaosFramework.Math.Exponentials;
+using static ChaosFramework.Math.Trigonometry;
 
 namespace LD60.World
 {
     [DefaultInstancer(1, "models/cube.gmdl", null)]
-    public class Player : Component<WorldScene>, Instancable
+    public class Player : Component<TemplateWorld>, Instancable
     {
         const float VIEW_DISTANCE = 5.0f;
         const float VIEW_HEIGHT = 2.8f;
@@ -36,7 +36,8 @@ namespace LD60.World
                 physics.AddShape(new MeshShape([.. scene.game.meshes.Load("models/cube.gmdl", x).content.data.pos]));
             physics.shapes[0].bounce = 0;
             physics.state.contactFriction = 0;
-            physics.state.position.y = 1;
+            physics.state.position = scene.hostility.goal;
+            physics.state.position.y += 1;
             physics.state.velocity.z = -2.5f;
 
             scene.instancers.GetOrCreateManager(typeof(Player)).instancedThings.Add(this);

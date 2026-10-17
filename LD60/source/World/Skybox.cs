@@ -1,6 +1,6 @@
-using ChaosFramework.Graphics.OpenGl.AssetContainers;
-using ChaosFramework.Graphics.OpenGl;
 using ChaosFramework.Components;
+using ChaosFramework.Graphics.OpenGl;
+using ChaosFramework.Graphics.OpenGl.AssetContainers;
 using ChaosFramework.Math;
 using OpenTK.Graphics.OpenGL;
 
