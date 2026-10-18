@@ -15,12 +15,14 @@ using SysCol = System.Collections.Generic;
 
 namespace LD60.World
 {
+    using PickSample = (Vector3f pos, Vector3f nor, int pick);
+
     public class Overlay
         : DialogScene
     {
         readonly FloatingIslands islands;
         readonly SysCol.Dictionary<int, Pickable> registeredPickables = [];
-        readonly TextureContainer.Entry pickingTex;
+        readonly TextureContainer.Entry pickingPos, pickingNor;
         readonly Framebuffer pickingFbo;
         readonly Bounds2i viewPort;
         readonly float ratio;
@@ -55,15 +57,18 @@ namespace LD60.World
                 PixelInternalFormat.Rgba32f
                 );
 
-            Texture tex = new(islands.game.graphics.dispatcher, texParams);
-            pickingTex = TextureContainer.Entry.Mock((_, _) => tex, _ => tex.Dispose());
-            pickingFbo = new Framebuffer(viewPort, [tex], islands.deferredShader.depthBuffer);
+            Texture pos = new(islands.game.graphics.dispatcher, texParams);
+            Texture nor = new(islands.game.graphics.dispatcher, texParams);
+            pickingPos = TextureContainer.Entry.Mock((_, _) => pos, _ => pos.Dispose());
+            pickingNor = TextureContainer.Entry.Mock((_, _) => nor, _ => nor.Dispose());
+            pickingFbo = new Framebuffer(viewPort, [pos, nor], islands.deferredShader.depthBuffer);
 
             BuildMenu("overlay", "Root/Overlay", null, null);
 
 #if DEBUG
             Vector2f v = new(ratio, 1);
-            panel.CreateControl<Image>(v * 0.8f, v * 0.15f).texture = pickingTex;
+            panel.CreateControl<Image>(v * 0.8f, v * 0.15f).texture = pickingPos;
+            panel.CreateControl<Image>(v * 0.8f - new Vector2f(0, v.y  * 0.32f), v * 0.15f).texture = pickingNor;
 #endif
 
             tools = panel.GetControlById("Tools") as FlowPanel;
@@ -111,16 +116,16 @@ namespace LD60.World
         void PickOnGoblins()
         {
             Vector2i pixel = CursorToPixel();
-            (Vector3f pos, int victim) = SamplePickable(pixel);
+            PickSample sample = SamplePickable(pixel);
 
-            if (!registeredPickables.TryGetValue(victim, out Pickable found))
+            if (!registeredPickables.TryGetValue(sample.pick, out Pickable found))
             {
                 System.Diagnostics.Debug.WriteLine("Dead pickable got picked!");
-                victim = 0;
+                sample.pick = 0;
             }
 
-            worldPos = victim > 0 ? pos : Vector3f.NAN;
-            picked = victim > 0 ? found : null;
+            worldPos = sample.pick > 0 ? sample.pos : Vector3f.NAN;
+            picked = sample.pick > 0 ? found : null;
         }
 
         public void Register(Pickable p)
@@ -139,25 +144,33 @@ namespace LD60.World
                 );
         }
 
-        (Vector3f, int) SamplePickable(Vector2i pixel)
+        PickSample SamplePickable(Vector2i pixel)
         {
             if (!hasPickingData)
-                return (Vector3f.NAN, 0);
+                return (Vector3f.NAN, Vector3f.NAN, 0);
 
             Framebuffer oldFb = context.graphics.stateTracker.BindFramebuffer(FramebufferTarget.Framebuffer, pickingFbo);
 
-            float[] pickingIndex = new float[4];
-
+            float[] pos = new float[4];
             GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
             ThrowErrors();
+            GL.ReadPixels(pixel.x, pixel.y, 1, 1, PixelFormat.Rgba, PixelType.Float, pos);
+            ThrowErrors();
 
-            GL.ReadPixels(pixel.x, pixel.y, 1, 1, PixelFormat.Rgba, PixelType.Float, pickingIndex);
+            float[] nor = new float[4];
+            GL.ReadBuffer(ReadBufferMode.ColorAttachment1);
+            ThrowErrors();
+            GL.ReadPixels(pixel.x, pixel.y, 1, 1, PixelFormat.Rgba, PixelType.Float, nor);
             ThrowErrors();
 
             context.graphics.stateTracker.BindFramebuffer(FramebufferTarget.Framebuffer, oldFb);
+            int pick = (int)Math.Round(pos[3]); // graphics drivers may produce rounding errors
 
-            int cast = (int)Math.Round(pickingIndex[3]); // graphics drivers may produce rounding errors
-            return (new Vector3f(pickingIndex[0], pickingIndex[1], pickingIndex[2]), cast);
+            return (
+                new Vector3f(pos[0], pos[1], pos[2]),
+                new Vector3f(nor[0], nor[1], nor[2]),
+                pick
+                );
         }
     }
 }

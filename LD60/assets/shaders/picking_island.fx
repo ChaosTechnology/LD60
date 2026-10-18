@@ -14,9 +14,12 @@ sampler2DArray specularSampler : SPECULAR_MAP;
 
 void fs_Picking(
     vec3 worldPos : TEXCOORD1,
-    out vec4 col : COLOR0
+    vec3 worldNor : TEXCOORD2,
+    out vec4 pos : COLOR0,
+    out vec4 nor : COLOR1
 ) {
-    col = vec4(worldPos, pickingIndex);
+    pos = vec4(worldPos, pickingIndex);
+    nor = vec4(worldNor, 1);
 }
 
 void fs_sampleMaterial(
@@ -59,7 +62,7 @@ void vs_PassMaterialIndex(
 
 Pass Picking
 {
-    VertexShader = vs_transformPositionAndWorld;
+    VertexShader = vs_transformPositionAndWorld, vs_transformNormal;
     FragmentShader = fs_Picking;
 }
 

@@ -5,9 +5,12 @@ import shaders/picking_base.cfx;
 void fs_Picking(
     float instanceID : INSTANCE_ID,
     vec3 worldPos : TEXCOORD1,
-    out vec4 col : COLOR0
+    vec3 worldNor : TEXCOORD2,
+    out vec4 pos : COLOR0,
+    out vec4 nor : COLOR1
 ) {
-    col = vec4(worldPos, instanceID);
+    pos = vec4(worldPos, instanceID);
+    nor = vec4(worldNor, 1);
 }
 
 void fs_sampleMaterial(
@@ -23,7 +26,7 @@ void fs_sampleMaterial(
 
 Pass Picking
 {
-    VertexShader = vs_transformPositionAndWorld, PASS(float INSTANCE_ID);
+    VertexShader = vs_transformPositionAndWorld, vs_transformNormal, PASS(float INSTANCE_ID);
     FragmentShader = fs_Picking;
 }
 
