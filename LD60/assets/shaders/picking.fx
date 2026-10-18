@@ -5,9 +5,10 @@ int pickingIndex;
 float picked;
 
 void fs_Picking(
+    vec3 worldPos : TEXCOORD1,
     out vec4 col : COLOR0
 ) {
-    col = vec4(pickingIndex, 0.0, 0.0, 1.0);
+    col = vec4(worldPos, pickingIndex);
 }
 
 void fs_sampleMaterial(
@@ -22,6 +23,6 @@ void fs_sampleMaterial(
 
 Pass Picking
 {
-    VertexShader = vs_transformPosition;
+    VertexShader = vs_transformPositionAndWorld;
     FragmentShader = fs_Picking;
 }

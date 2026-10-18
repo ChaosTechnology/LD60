@@ -51,8 +51,8 @@ namespace LD60.World
                 PixelType.Float,
                 TextureMinFilter.Nearest,
                 TextureMagFilter.Nearest,
-                PixelFormat.Red,
-                PixelInternalFormat.R32f
+                PixelFormat.Rgba,
+                PixelInternalFormat.Rgba32f
                 );
 
             Texture tex = new(islands.game.graphics.dispatcher, texParams);
@@ -98,7 +98,7 @@ namespace LD60.World
         {
             hasPickingData = true;
             islands.game.graphics.stateTracker.BindFramebuffer(FramebufferTarget.Framebuffer, pickingFbo);
-            GL.ClearColor(0, 0, 0, 1);
+            GL.ClearColor(0, 0, 0, 0);
             GL.Clear(ClearBufferMask.ColorBufferBit);
         }
 
@@ -111,8 +111,8 @@ namespace LD60.World
         void PickOnGoblins()
         {
             Vector2i pixel = CursorToPixel();
-            int victim = SamplePickable(pixel);
-            worldPos = victim > 0 ? SampleWorldPos(pixel) : Vector3f.NAN;
+            (Vector3f pos, int victim) = SamplePickable(pixel);
+            worldPos = victim > 0 ? pos : Vector3f.NAN;
             picked = victim > 0 ? registeredPickables[victim] : null;
         }
 
@@ -132,52 +132,25 @@ namespace LD60.World
                 );
         }
 
-        int SamplePickable(Vector2i pixel)
+        (Vector3f, int) SamplePickable(Vector2i pixel)
         {
             if (!hasPickingData)
-                return 0;
+                return (Vector3f.NAN, 0);
 
             Framebuffer oldFb = context.graphics.stateTracker.BindFramebuffer(FramebufferTarget.Framebuffer, pickingFbo);
 
-            float[] pickingIndex = new float[1];
+            float[] pickingIndex = new float[4];
 
             GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
             ThrowErrors();
 
-            GL.ReadPixels(pixel.x, pixel.y, 1, 1, PixelFormat.Red, PixelType.Float, pickingIndex);
+            GL.ReadPixels(pixel.x, pixel.y, 1, 1, PixelFormat.Rgba, PixelType.Float, pickingIndex);
             ThrowErrors();
 
             context.graphics.stateTracker.BindFramebuffer(FramebufferTarget.Framebuffer, oldFb);
 
-            int cast = (int)Math.Round(pickingIndex[0]); // graphics drivers may produce rounding errors
-            return cast;
-        }
-
-        Vector3f SampleWorldPos(Vector2i pixel)
-        {
-            if (!hasPickingData)
-                return 0;
-
-            Framebuffer oldFb = context.graphics.stateTracker.BindFramebuffer(
-                FramebufferTarget.Framebuffer,
-                islands.deferredShader.worldFramebuffer
-                );
-
-            byte[] worldPos = new byte[16];
-
-            GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
-            ThrowErrors();
-
-            GL.ReadPixels(pixel.x, pixel.y, 1, 1, PixelFormat.Rgba, PixelType.Float, worldPos);
-            ThrowErrors();
-
-            context.graphics.stateTracker.BindFramebuffer(FramebufferTarget.Framebuffer, oldFb);
-
-            return new Vector3f(
-                BitConverter.ToSingle(worldPos, 0),
-                BitConverter.ToSingle(worldPos, 4),
-                BitConverter.ToSingle(worldPos, 8)
-                );
+            int cast = (int)Math.Round(pickingIndex[3]); // graphics drivers may produce rounding errors
+            return (new Vector3f(pickingIndex[0], pickingIndex[1], pickingIndex[2]), cast);
         }
     }
 }
