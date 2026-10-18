@@ -150,10 +150,7 @@ namespace LD60.World
 
             context.graphics.stateTracker.BindFramebuffer(FramebufferTarget.Framebuffer, oldFb);
 
-            int cast = (int)pickingIndex[0];
-            if (cast != pickingIndex[0])
-                throw new UnreachableException($"Picking index must always be an exact integer: {pickingIndex[0]}");
-
+            int cast = (int)Math.Round(pickingIndex[0]); // graphics drivers may produce rounding errors
             return cast;
         }
 
