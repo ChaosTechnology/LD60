@@ -11,14 +11,13 @@ using ChaosFramework.Physics;
 using ChaosFramework.Shapes.Convex;
 using LD60.Instancing;
 using LD60.World.Tactician.Placables;
-using Microsoft.VisualBasic;
 
 namespace LD60.World.Tactician.Tools
 {
     public class Place
         : Tool
     {
-        Type placable = typeof(Cube);
+        Type placable = typeof(Rock);
 
         public override void Select()
         {
