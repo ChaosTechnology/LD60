@@ -6,7 +6,8 @@ using ChaosFramework.Shapes;
 
 namespace LD60.Instancing
 {
-    public class AnimatedInstancer : AnimatedInstancerBase
+    public class AnimatedInstancer
+        : AnimatedInstancerBase
     {
         protected InstancingHost host => Context<InstancingHost>();
 

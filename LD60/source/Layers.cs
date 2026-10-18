@@ -7,6 +7,8 @@ namespace LD60
         FillInstancers,
         BeginWorld,
         World,
+        BeginPicking,
+        Picking,
         BeginMaterial,
         Material,
         Sky,

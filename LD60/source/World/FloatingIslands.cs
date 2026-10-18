@@ -17,7 +17,7 @@ namespace LD60.World
         public readonly Hostility hostility;
         public readonly Map map;
 
-        bool needOverlay = true;
+        public Overlay overlay {get; private set;}
 
         public FloatingIslands(Game game)
             : base (game)
@@ -46,9 +46,15 @@ namespace LD60.World
             };
         }
 
+        public override void SetDrawCalls()
+        {
+            base.SetDrawCalls();
+            drawLayers[(int)DrawLayers.BeginPicking].Add(overlay.BeginPicking);
+        }
+
         public override void SetUpdateCalls()
         {
-            if (needOverlay)
+            if (overlay == null)
                 CreateOverlay();
 
             base.SetUpdateCalls();
@@ -57,14 +63,12 @@ namespace LD60.World
 
         void CreateOverlay()
         {
-            needOverlay = false;
-
             DisposablesList<Scene> scenes = [];
             foreach (Scene s in game.scenes)
             {
                 scenes.Add(s);
                 if (s == this)
-                    scenes.Add(new Overlay(game.menuContext));
+                    scenes.Add(overlay = new Overlay(this));
             }
 
             game.scenes.Clear();

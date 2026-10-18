@@ -10,17 +10,17 @@ using ChaosFramework.Shapes.Convex;
 using ChaosFramework.Shapes.Rigging;
 using ChaosUtil.Primitives;
 using LD60.Menu;
+using static ChaosFramework.Math.Clamping;
 using static ChaosFramework.Math.Constants;
 using static ChaosFramework.Math.Exponentials;
-using static ChaosFramework.Math.Clamping;
 using static ChaosFramework.Math.Trigonometry;
 
 namespace LD60.World.Enemies
 {
-    [Instancing.AnimatedInstancer(666, "models/goblin/goblin.agmdl", "models/goblin/goblin.1.mat")]
-    [Instancing.AnimatedInstancer(666, "models/goblin/goblin.agmdl", "models/goblin/goblin.2.mat")]
-    [Instancing.AnimatedInstancer(666, "models/goblin/goblin.agmdl", "models/goblin/goblin.3.mat")]
-    public class Goblin : Component<FloatingIslands>, Instancable
+    [Instancing.AnimatedPickableInstancer(666, "models/goblin/goblin.agmdl", "models/goblin/goblin.1.mat")]
+    [Instancing.AnimatedPickableInstancer(666, "models/goblin/goblin.agmdl", "models/goblin/goblin.2.mat")]
+    [Instancing.AnimatedPickableInstancer(666, "models/goblin/goblin.agmdl", "models/goblin/goblin.3.mat")]
+    public class Goblin : Component<FloatingIslands>, Instancable, Pickable
     {
         const float MAX_TURNING_RADIANS_PER_SECOND = 2.0f;
         static readonly float GOBLIN_MOVE_FAST = 3;
@@ -35,6 +35,8 @@ namespace LD60.World.Enemies
         float walkProgress;
         float facingAngle = 0;
 
+        int Pickable.pickableIndex {get; set;}
+
         public Goblin()
         {
             physics = new Physical(this);
@@ -47,6 +49,7 @@ namespace LD60.World.Enemies
             rig = Rig.FromStream(scene.game.archive.OpenRead("models/goblin/goblin.rig"));
             animation = scene.game.animations.Load("models/goblin/goblin.anim", this);
             scene.instancers[typeof(Goblin)].instancedThings.Add(this);
+            scene.overlay.Register(this);
         }
 
         public override void SetUpdateCalls()
@@ -164,8 +167,12 @@ namespace LD60.World.Enemies
 
         void Instancable.GiveMeInstances(InstancingAttribute[] instancers)
         {
-            Instancing.AnimatedInstancer animInstancer = (Instancing.AnimatedInstancer)instancers[kind];
-            animInstancer.AddInstance(rig.GetBoneTransforms(animInstancer.animesh), physics.state.GetTransform());
+            Instancing.AnimatedPickableInstancer animInstancer = (Instancing.AnimatedPickableInstancer)instancers[kind];
+            animInstancer.AddInstance(
+                rig.GetBoneTransforms(animInstancer.animesh),
+                physics.state.GetTransform(),
+                new Vector4f(((Pickable)this).pickableIndex, 0, 0, 0)
+                );
         }
 
         bool Instancable.NeedsInstancedDraw()
@@ -176,6 +183,7 @@ namespace LD60.World.Enemies
             base.DoDispose();
             scene.physics.Remove(physics);
             scene.instancers[typeof(Goblin)].instancedThings.Remove(this);
+            scene.overlay.Unregister(this);
         }
     }
 }
