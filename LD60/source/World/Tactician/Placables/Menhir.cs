@@ -10,7 +10,7 @@ namespace LD60.World.Tactician.Placables
         public Menhir()
             : base()
         {
-            physics.state.mass = 100;
+            physics.isStatic = true;
         }
 
         protected override void Create(CreateParameters cparams)
