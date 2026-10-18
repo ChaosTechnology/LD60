@@ -16,6 +16,8 @@ namespace LD60.World
     {
         public abstract class Segment : Pickable
         {
+            static readonly char[] LINE_BREAKS = ['\r', '\n'];
+
             public readonly MeshContainer.Entry mesh;
             public readonly ShapeContainer.Entry shapes;
             public readonly ShapeContainer.Entry home;
@@ -28,7 +30,7 @@ namespace LD60.World
                 map.scene.overlay.Register(this);
 
                 using (StreamReader materialsReader = new(map.scene.game.archive.OpenRead($"{source}.gmdl.materials")))
-                    usedMaterials = materialsReader.ReadToEnd().Split(['\r', '\n'], System.StringSplitOptions.RemoveEmptyEntries);
+                    usedMaterials = materialsReader.ReadToEnd().Split(LINE_BREAKS, System.StringSplitOptions.RemoveEmptyEntries);
 
                 mesh = map.scene.game.meshes.Load($"{source}.gmdl", map);
                 shapes = map.scene.game.shapes.Load($"{source}.gmdl", map);
