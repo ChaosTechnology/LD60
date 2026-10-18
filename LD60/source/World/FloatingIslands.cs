@@ -23,8 +23,6 @@ namespace LD60.World
 
         bool mustInsertOverlay = true;
 
-        Tool currentTool;
-
         public FloatingIslands(Game game)
             : base (game)
         {
@@ -40,13 +38,14 @@ namespace LD60.World
             lights.Add(sun);
 
             overlay = new Overlay(this);
+            overlay.SelectDefaultTool();
+
             map = new Map(this);
             hostility = AddComponent<Hostility>();
 
             AddComponent<World>();
             AddComponent<Skybox>();
             AddComponent<Player>();
-            currentTool = AddComponent<Tactician.Tools.Place>();
 
             pause = new Menu.PauseMenu(this)
             {
@@ -74,7 +73,7 @@ namespace LD60.World
         {
             if (game.input.bindings.IsMatch(Inputs.ActivateTool, e.axis))
             {
-                currentTool?.Activate();
+                overlay.currentTool?.Activate();
                 return true;
             }
 

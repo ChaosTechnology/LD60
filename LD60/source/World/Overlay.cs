@@ -1,11 +1,15 @@
 using System;
 using System.Diagnostics;
+using System.Linq;
 using ChaosFramework.Graphics.OpenGl;
 using ChaosFramework.Graphics.OpenGl.AssetContainers;
 using ChaosFramework.Math;
 using ChaosFramework.Math.Vectors;
 using ChaosFramework.Menu.OpenGl;
 using ChaosFramework.Menu.OpenGl.Controls;
+using ChaosFramework.Menu.OpenGl.Controls.Layout;
+using ChaosUtil.Reflection;
+using LD60.World.Tactician;
 using OpenTK.Graphics.OpenGL;
 using static ChaosFramework.Graphics.OpenGl.Graphics;
 using SysCol = System.Collections.Generic;
@@ -27,6 +31,11 @@ namespace LD60.World
 
         public Pickable picked {get; private set;} = null;
         public Vector3f worldPos {get; private set;} = Vector3f.NAN;
+
+        public readonly FlowPanel subTools;
+        readonly FlowPanel tools;
+
+        public Tool currentTool {get; private set;}
 
         public Overlay(FloatingIslands islands)
             : base(islands.game.menuContext)
@@ -51,10 +60,39 @@ namespace LD60.World
             pickingTex = TextureContainer.Entry.Mock((_, _) => tex, _ => tex.Dispose());
             pickingFbo = new Framebuffer(viewPort, [tex], islands.deferredShader.depthBuffer);
 
+            BuildMenu("overlay", "Root/Overlay", null, null);
+
 #if DEBUG
             Vector2f v = new(ratio, 1);
             panel.CreateControl<Image>(v * 0.8f, v * 0.15f).texture = pickingTex;
 #endif
+
+            tools = panel.GetControlById("Tools") as FlowPanel;
+            foreach(Type toolType in AssemblyManager.SubTypesOf<Tool>())
+            {
+                Tool tool = (Tool)islands.AddComponent(toolType);
+                Button btn = tools.CreateControl<Button>(0, 0.05f, toolType.Name);
+
+                bool Enabled()
+                    => islands.overlay.currentTool != tool;
+
+                void Select(Control _)
+                {
+                    islands.overlay.currentTool = tool;
+                    tool.Select();
+                }
+
+                btn.enabledFunction = Enabled;
+                btn.mouseDownLeft += Select;
+            }
+
+            subTools = panel.GetControlById("Placables") as FlowPanel;
+        }
+
+        public void SelectDefaultTool()
+        {
+            Button startupTool = tools.EnumerateChildren<Button>(false).First();
+            startupTool.mouseDownLeft(startupTool);
         }
 
         public void BeginPicking()

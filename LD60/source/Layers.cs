@@ -34,10 +34,9 @@ namespace LD60
 
     public enum InputLayer
     {
-        Game,
-        Tools,
-        HUD,
-        Menu,
         ScreenShot,
+        Menu,
+        Tools,
+        Game,
     }
 }

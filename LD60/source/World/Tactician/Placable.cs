@@ -2,9 +2,11 @@ using ChaosFramework.Components;
 using ChaosFramework.Graphics.OpenGl.Instancing;
 using ChaosFramework.Math.Vectors;
 using ChaosFramework.Physics;
+using ChaosUtil.Reflection;
 
 namespace LD60.World.Tactician
 {
+    [AssemblyManager.ListSubTypes]
     public abstract class Placable
         : Component<FloatingIslands>
         , Instancable
