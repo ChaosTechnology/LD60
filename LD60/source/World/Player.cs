@@ -9,9 +9,9 @@ namespace LD60.World
     [Instancing.DefaultInstancer(1, "models/cube.gmdl", null)]
     public class Player : Component<FloatingIslands>
     {
-        const float VIEW_DISTANCE = 5.0f;
-        const float VIEW_HEIGHT = 10f;
-        const float MOVEMENT_SPEED = 6.66f;
+        const float VIEW_DISTANCE = 30.0f;
+        const float VIEW_HEIGHT = 20f;
+        const float MOVEMENT_SPEED = 66.6f * 0.5f;
 
         Vector3f camTarget = Vector3f.EMPTY;
         float viewAngle = 0.3f;

@@ -29,15 +29,17 @@ namespace LD60.World
             {
                 map.scene.overlay.Register(this);
 
-                using (StreamReader materialsReader = new(map.scene.game.archive.OpenRead($"{source}.gmdl.materials")))
+                using (StreamReader materialsReader = new(map.scene.game.archive.OpenRead($"{source}/mesh.gmdl.materials")))
                     usedMaterials = materialsReader.ReadToEnd().Split(LINE_BREAKS, System.StringSplitOptions.RemoveEmptyEntries);
 
-                mesh = map.scene.game.meshes.Load($"{source}.gmdl", map);
-                shapes = map.scene.game.shapes.Load($"{source}.gmdl", map);
+                mesh = map.scene.game.meshes.Load($"{source}/mesh.gmdl", map);
+                shapes = map.scene.game.shapes.Load($"{source}/shapes.obj", map);
 
-                home = map.scene.game.shapes.Load($"{source}.area.gmdl", map);
+                if (!map.scene.game.shapes.TryLoad($"{source}/area.obj", out home, map))
+                    home = map.scene.game.shapes.Load($"{source}/shapes.obj", map);
+
                 foreach(Shape s in home.content)
-                    s.Update(Matrix.IDENTITY, true);
+                    s.Update(Matrix.Translation(0, 1, 0), true);
             }
         }
 
@@ -58,7 +60,7 @@ namespace LD60.World
                 : base(map, source)
             {
                 this.destination = destination;
-                rig = Rig.FromStream(map.scene.game.archive.OpenRead($"{source}.rig"));
+                rig = Rig.FromStream(map.scene.game.archive.OpenRead($"{source}/path.rig"));
 
                 Rig.Bone endBone = rig.root.children.Single(), nextBone;
                 start = endBone.GetPosition();
@@ -78,7 +80,7 @@ namespace LD60.World
             }
         }
 
-        const string WORLD = "models/world/";
+        const string WORLD = "models/world2/";
 
         public readonly ImmutableArray<Island> islands;
         public readonly ImmutableArray<Path> paths;
@@ -91,13 +93,28 @@ namespace LD60.World
 
             // TODO: load from some config file
 
-            Island goal = new(this, $"{WORLD}island.x");
-            Path pathA = new(this, $"{WORLD}path.a", goal);
-            Path pathB = new(this, $"{WORLD}path.b", goal);
-            Island start = new(this, $"{WORLD}island.1", pathA, pathB);
+            Island treasure = new(this, $"{WORLD}island.treasure");
+            Path middleToTreasure = new(this, $"{WORLD}bridge.middle_to_treasure", treasure);
+            Path sideToTreasure = new(this, $"{WORLD}bridge.side_to_treasure", treasure);
 
-            islands = new[] { start, goal };
-            paths = new[] { pathA, pathB };
+            Island middle = new(this, $"{WORLD}island.middle", middleToTreasure);
+            Path spawn3ToMiddle = new(this, $"{WORLD}bridge.spawn3_to_middle", middle);
+            Path spawn2ToMiddle = new(this, $"{WORLD}bridge.spawn2_to_middle", middle);
+
+            Island spawn1 = new(this, $"{WORLD}island.spawn1", spawn3ToMiddle); // TODO: the island should be called spawn3
+
+            Island sidevector = new(this, $"{WORLD}island.sidevector", sideToTreasure);
+            Path tinyToSide = new(this, $"{WORLD}bridge.middle_to_side", middle); // TODO: the path should be called tiny_to_side
+            Island tiny = new(this, $"{WORLD}island.tiny", tinyToSide);
+
+            Path spawn1ToTiny = new(this, $"{WORLD}bridge.spawn3_to_tiny", middle); // TODO: the path should be called spawn1_to_tiny
+            Path spawn2ToTiny = new(this, $"{WORLD}bridge.spawn2_to_tiny", middle);
+
+            Island spawn3 = new(this, $"{WORLD}island.spawn3", spawn1ToTiny);
+            Island spawn2 = new(this, $"{WORLD}island.spawn2", spawn2ToMiddle, spawn2ToTiny);
+
+            islands = new[] { middle, treasure, sidevector, spawn1, spawn2, spawn3, tiny };
+            paths = new [] { middleToTreasure, sideToTreasure, spawn3ToMiddle, spawn2ToMiddle, tinyToSide, spawn1ToTiny, spawn2ToTiny };
         }
 
         public SysCol.IEnumerable<Segment> EnumerateSegments()
