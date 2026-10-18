@@ -1,0 +1,8 @@
+void highlight(
+    float picked,
+    inout vec4 outEmissive,
+    inout vec4 outDiffuse,
+    inout vec4 outSpecular
+) {
+    outEmissive += picked * vec4(0.5, 0.0, 0.0, 0.0);
+}

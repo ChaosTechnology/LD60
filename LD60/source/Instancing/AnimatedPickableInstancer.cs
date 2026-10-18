@@ -16,7 +16,7 @@ namespace LD60.Instancing
             int maxInstances,
             string meshSource,
             string materialSource,
-            string overrideEffect = "shaders/picking.fx",
+            string overrideEffect = "shaders/picking_skinned_instanced.fx",
             params string[] customRegisters)
             : base(
                 maxInstances,

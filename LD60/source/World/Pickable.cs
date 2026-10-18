@@ -2,6 +2,6 @@ namespace LD60.World
 {
     public interface Pickable
     {
-        int pickableIndex{get; set;}
+        int pickingIndex{get; set;}
     }
 }

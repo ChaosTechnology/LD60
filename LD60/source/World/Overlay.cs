@@ -26,6 +26,8 @@ namespace LD60.World
         int nextPickingIndex = 0;
         bool hasPickingData = false;
 
+        public Pickable picked {get; private set;} = null;
+
         public Overlay(FloatingIslands islands)
             : base(islands.game.menuContext)
         {
@@ -72,15 +74,14 @@ namespace LD60.World
         void PickOnGoblins()
         {
             int victim = SamplePickable();
-            if (victim > 0)
-                (registeredPickables[victim] as Goblin)?.Dispose();
+            picked = victim > 0 ? registeredPickables[victim] : null;
         }
 
         public void Register(Pickable p)
-            => registeredPickables[p.pickableIndex = ++nextPickingIndex] = p;
+            => registeredPickables[p.pickingIndex = ++nextPickingIndex] = p;
 
         public void Unregister(Pickable p)
-            => registeredPickables.Remove(p.pickableIndex);
+            => registeredPickables.Remove(p.pickingIndex);
 
         Vector2i CursorToPixel()
         {

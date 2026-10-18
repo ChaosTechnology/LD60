@@ -35,7 +35,7 @@ namespace LD60.World.Enemies
         float walkProgress;
         float facingAngle = 0;
 
-        int Pickable.pickableIndex {get; set;}
+        int Pickable.pickingIndex {get; set;}
 
         public Goblin()
         {
@@ -171,7 +171,7 @@ namespace LD60.World.Enemies
             animInstancer.AddInstance(
                 rig.GetBoneTransforms(animInstancer.animesh),
                 physics.state.GetTransform(),
-                new Vector4f(((Pickable)this).pickableIndex, 0, 0, 0)
+                new Vector4f(((Pickable)this).pickingIndex, scene.overlay.picked == this ? 1 : 0, 0, 0)
                 );
         }
 

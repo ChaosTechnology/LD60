@@ -14,10 +14,11 @@ namespace LD60.World
 
         readonly Menu.PauseMenu pause;
 
+        public readonly Overlay overlay;
         public readonly Hostility hostility;
         public readonly Map map;
 
-        public Overlay overlay {get; private set;}
+        bool mustInsertOverlay = true;
 
         public FloatingIslands(Game game)
             : base (game)
@@ -33,7 +34,8 @@ namespace LD60.World
 
             lights.Add(sun);
 
-            map = new Map(game);
+            overlay = new Overlay(this);
+            map = new Map(this);
             hostility = AddComponent<Hostility>();
 
             AddComponent<World>();
@@ -54,21 +56,27 @@ namespace LD60.World
 
         public override void SetUpdateCalls()
         {
-            if (overlay == null)
-                CreateOverlay();
+            if (mustInsertOverlay)
+                InsertOverlay();
 
             base.SetUpdateCalls();
             game.input.AddKeyDownHandler(InputLayer.Game, Pause);
         }
 
-        void CreateOverlay()
+        /// <summary>
+        ///     Ensure that overlay is added to the scenes list AFTER this scene.
+        ///     Can't be done in constructor, so do it during first update.
+        /// </summary>
+        void InsertOverlay()
         {
+            mustInsertOverlay = false;
+
             DisposablesList<Scene> scenes = [];
             foreach (Scene s in game.scenes)
             {
                 scenes.Add(s);
                 if (s == this)
-                    scenes.Add(overlay = new Overlay(this));
+                    scenes.Add(overlay);
             }
 
             game.scenes.Clear();

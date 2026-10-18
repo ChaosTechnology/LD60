@@ -13,18 +13,22 @@ namespace LD60.World
 {
     public class Map : Disposable
     {
-        public abstract class Segment
+        public abstract class Segment : Pickable
         {
             public readonly MeshContainer.Entry mesh;
             public readonly ShapeContainer.Entry shapes;
             public readonly ShapeContainer.Entry home;
 
+            int Pickable.pickingIndex { get; set; }
+
             public Segment(Map map, string source)
             {
-                mesh = map.game.meshes.Load($"{source}.gmdl", map);
-                shapes = map.game.shapes.Load($"{source}.gmdl", map);
+                map.scene.overlay.Register(this);
 
-                home = map.game.shapes.Load($"{source}.area.gmdl", map);
+                mesh = map.scene.game.meshes.Load($"{source}.gmdl", map);
+                shapes = map.scene.game.shapes.Load($"{source}.gmdl", map);
+
+                home = map.scene.game.shapes.Load($"{source}.area.gmdl", map);
                 foreach(Shape s in home.content)
                     s.Update(Matrix.IDENTITY, true);
             }
@@ -47,7 +51,7 @@ namespace LD60.World
                 : base(map, source)
             {
                 this.destination = destination;
-                rig = Rig.FromStream(map.game.archive.OpenRead($"{source}.rig"));
+                rig = Rig.FromStream(map.scene.game.archive.OpenRead($"{source}.rig"));
 
                 Rig.Bone endBone = rig.root.children.Single(), nextBone;
                 start = endBone.GetPosition();
@@ -72,11 +76,11 @@ namespace LD60.World
         public readonly ImmutableArray<Island> islands;
         public readonly ImmutableArray<Path> paths;
 
-        readonly Game game;
+        readonly FloatingIslands scene;
 
-        public Map(Game game)
+        public Map(FloatingIslands scene)
         {
-            this.game = game;
+            this.scene = scene;
 
             // TODO: load from some config file
 
