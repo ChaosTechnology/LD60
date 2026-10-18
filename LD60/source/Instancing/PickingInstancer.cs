@@ -2,7 +2,8 @@ using ChaosUtil.Platform.Paths;
 
 namespace LD60.Instancing
 {
-    class PickingInstancer : DefaultInstancer
+    class PickingInstancer
+        : DefaultInstancer
     {
         public PickingInstancer() { }
         public PickingInstancer(

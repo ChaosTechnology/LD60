@@ -7,7 +7,7 @@ using ChaosUtil.Platform.Paths;
 
 namespace LD60.Instancing
 {
-    class DefaultInstancer : InstancingAttribute
+    class DefaultInstancer : InstancingAttribute, NormalMapped
     {
         protected InstancingHost host { get; private set; }
         public ShaderContainer.Entry shader { get; protected set; }

@@ -8,6 +8,7 @@ namespace LD60.Instancing
 {
     public class AnimatedInstancer
         : AnimatedInstancerBase
+        , NormalMapped
     {
         protected InstancingHost host => Context<InstancingHost>();
 
