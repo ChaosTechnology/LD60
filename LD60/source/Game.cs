@@ -1,17 +1,14 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using ChaosFramework.Components;
 using ChaosFramework.Core;
 using ChaosFramework.Graphics.AssetContainers;
 using ChaosFramework.Graphics.OpenGl;
 using ChaosFramework.Graphics.OpenGl.AssetContainers;
-using ChaosFramework.Graphics.OpenGl.ChaosShader;
 using ChaosFramework.Graphics.OpenGl.Model;
 using ChaosFramework.Graphics.OpenGl.Text;
 using ChaosFramework.Input;
 using ChaosFramework.IO;
-using ChaosFramework.IO.Containers;
 using ChaosFramework.IO.Streams;
 using ChaosFramework.Menu.OpenGl;
 using ChaosFramework.Physics;
