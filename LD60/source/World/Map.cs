@@ -1,3 +1,4 @@
+using System.IO;
 using System.Linq;
 using ChaosFramework.Collections.Immutable;
 using ChaosFramework.Core;
@@ -18,12 +19,16 @@ namespace LD60.World
             public readonly MeshContainer.Entry mesh;
             public readonly ShapeContainer.Entry shapes;
             public readonly ShapeContainer.Entry home;
+            public readonly string[] usedMaterials;
 
             int Pickable.pickingIndex { get; set; }
 
             public Segment(Map map, string source)
             {
                 map.scene.overlay.Register(this);
+
+                using (StreamReader materialsReader = new(map.scene.game.archive.OpenRead($"{source}.gmdl.materials")))
+                    usedMaterials = materialsReader.ReadToEnd().Split(['\r', '\n'], System.StringSplitOptions.RemoveEmptyEntries);
 
                 mesh = map.scene.game.meshes.Load($"{source}.gmdl", map);
                 shapes = map.scene.game.shapes.Load($"{source}.gmdl", map);

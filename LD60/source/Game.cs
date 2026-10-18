@@ -1,13 +1,17 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using ChaosFramework.Components;
 using ChaosFramework.Core;
+using ChaosFramework.Graphics.AssetContainers;
 using ChaosFramework.Graphics.OpenGl;
 using ChaosFramework.Graphics.OpenGl.AssetContainers;
+using ChaosFramework.Graphics.OpenGl.ChaosShader;
 using ChaosFramework.Graphics.OpenGl.Model;
 using ChaosFramework.Graphics.OpenGl.Text;
 using ChaosFramework.Input;
 using ChaosFramework.IO;
+using ChaosFramework.IO.Containers;
 using ChaosFramework.IO.Streams;
 using ChaosFramework.Menu.OpenGl;
 using ChaosFramework.Physics;
@@ -30,6 +34,7 @@ namespace LD60
         public Music music { get; private set; }
 
         public TextureContainer textures { get; private set; }
+        public Rgba8ImageContainer multiMaterialLayers { get; private set; }
         public MaterialContainer materials { get; private set; }
         public FontContainer fonts { get; private set; }
         public MeshContainer meshes { get; private set; }
@@ -111,8 +116,9 @@ namespace LD60
                     .LoadAllAsync(@"^*\.fx$", this);
             }
             RunTasks(
-                (textures = new TextureContainer(archive, graphics.dispatcher, monitoring)).LoadAllAsync(@"^.*\.png$", this)
+                (textures = new TextureContainer(archive, graphics.dispatcher, monitoring)).LoadAllAsync(@"^.*(?!\.matlayer)\.png$", this)
                     .ContinueWith(_ => (materials = new MaterialContainer(archive, graphics, textures, monitoring)).LoadAllAsync(@"^.*\.mat$", this)),
+                (multiMaterialLayers = new Rgba8ImageContainer(archive, monitoring)).LoadAllAsync(@"^.*matlayer\.png$", this),
                 (meshes = new MeshContainer(archive, graphics.dispatcher, monitoring))
                     .LoadAllAsync(MeshLoadFlags.Default, @"^.*\.gmdl$", this)
                     .ContinueWith(_ => meshes.LoadAll(MeshLoadFlags.Animated, @"^.*\.agmdl$", this))
