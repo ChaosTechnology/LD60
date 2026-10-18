@@ -112,8 +112,15 @@ namespace LD60.World
         {
             Vector2i pixel = CursorToPixel();
             (Vector3f pos, int victim) = SamplePickable(pixel);
+
+            if (!registeredPickables.TryGetValue(victim, out Pickable found))
+            {
+                System.Diagnostics.Debug.WriteLine("Dead pickable got picked!");
+                victim = 0;
+            }
+
             worldPos = victim > 0 ? pos : Vector3f.NAN;
-            picked = victim > 0 ? registeredPickables[victim] : null;
+            picked = victim > 0 ? found : null;
         }
 
         public void Register(Pickable p)
