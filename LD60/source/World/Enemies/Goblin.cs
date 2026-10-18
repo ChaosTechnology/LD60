@@ -161,7 +161,7 @@ namespace LD60.World.Enemies
 
         void ConsiderSuicide()
         {
-            if (physics.state.position.y < -100)
+            if (physics.state.position.y < FloatingIslands.DEATH_PLANE)
                 Dispose();
         }
 

@@ -30,6 +30,11 @@ namespace LD60.Input
                 inputs[(int)Inputs.PanBack].Add(keyboard[Keyboard.HidUsage.ArrowDown]);
                 inputs[(int)Inputs.PanRight].Add(keyboard[Keyboard.HidUsage.ArrowRight]);
             }
+
+            foreach(Mouse mouse in input.context.EnumerateDevices<Mouse>())
+            {
+                inputs[(int)Inputs.ActivateTool].Add(mouse.buttons[(int)Mouse.ButtonSemantic.Left]);
+            }
         }
 
         public bool IsMatch(Inputs input, InputAxis axis)

@@ -6,7 +6,6 @@ using ChaosFramework.Math;
 using ChaosFramework.Math.Vectors;
 using ChaosFramework.Menu.OpenGl;
 using ChaosFramework.Menu.OpenGl.Controls;
-using LD60.World.Enemies;
 using OpenTK.Graphics.OpenGL;
 using static ChaosFramework.Graphics.OpenGl.Graphics;
 using SysCol = System.Collections.Generic;

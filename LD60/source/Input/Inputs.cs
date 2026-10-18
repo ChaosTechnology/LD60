@@ -9,5 +9,6 @@ namespace LD60.Input
         TurnCamCcw,
         TurnCamCw,
         Pause,
+        ActivateTool,
     }
 }

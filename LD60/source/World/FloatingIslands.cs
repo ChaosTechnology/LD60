@@ -5,11 +5,14 @@ using ChaosFramework.Input;
 using ChaosFramework.Input.InputEvents;
 using ChaosFramework.Math.Vectors;
 using LD60.Input;
+using LD60.World.Tactician;
 
 namespace LD60.World
 {
     public class FloatingIslands : WorldScene
     {
+        public const float DEATH_PLANE = -100;
+
         public readonly DirectionalLight sun;
 
         readonly Menu.PauseMenu pause;
@@ -19,6 +22,8 @@ namespace LD60.World
         public readonly Map map;
 
         bool mustInsertOverlay = true;
+
+        Tool currentTool;
 
         public FloatingIslands(Game game)
             : base (game)
@@ -41,6 +46,7 @@ namespace LD60.World
             AddComponent<World>();
             AddComponent<Skybox>();
             AddComponent<Player>();
+            currentTool = AddComponent<Tactician.Tools.Place>();
 
             pause = new Menu.PauseMenu(this)
             {
@@ -61,6 +67,18 @@ namespace LD60.World
 
             base.SetUpdateCalls();
             game.input.AddKeyDownHandler(InputLayer.Game, Pause);
+            game.input.AddMouseDownHandler(InputLayer.Tools, Tools);
+        }
+
+        bool Tools(InputPushEvent<Mouse.Button> e)
+        {
+            if (game.input.bindings.IsMatch(Inputs.ActivateTool, e.axis))
+            {
+                currentTool?.Activate();
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
