@@ -18,7 +18,7 @@ namespace LD60.World
 
         protected override void Create(CreateParameters c)
         {
-            shader = scene.game.shaders.Load("shaders/picking_island.fx", this);
+            shader = scene.game.shaders.Load("shaders/picking.fx", this);
             cursorShader = scene.game.graphics.shaders.normalMap;
             cursorMesh = scene.game.meshes.Load("models/cursor.gmdl", this);
 
