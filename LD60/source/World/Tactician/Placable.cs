@@ -1,5 +1,6 @@
 using ChaosFramework.Components;
 using ChaosFramework.Graphics.OpenGl.Instancing;
+using ChaosFramework.Math.Vectors;
 using ChaosFramework.Physics;
 
 namespace LD60.World.Tactician
@@ -7,8 +8,11 @@ namespace LD60.World.Tactician
     public abstract class Placable
         : Component<FloatingIslands>
         , Instancable
+        , Pickable
     {
         public readonly Physical physics;
+
+        int Pickable.pickingIndex { get; set; }
 
         public Placable()
         {
@@ -18,8 +22,8 @@ namespace LD60.World.Tactician
         protected override void Create(CreateParameters cparams)
         {
             scene.physics.Add(physics);
-            physics.shapes.Add(scene.game.shapes.Load("models/rock/rock.gmdl", this));
             scene.instancers[GetType()].instancedThings.Add(this);
+            scene.overlay.Register(this);
         }
 
         public override void SetUpdateCalls()
@@ -39,7 +43,14 @@ namespace LD60.World.Tactician
         }
 
         public void GiveMeInstances(InstancingAttribute[] instancers)
-            => instancers[0].informer.AddInstance(physics.state.GetTransform());
+            => instancers[0].informer.AddInstance(
+                physics.state.GetTransform(),
+                new Vector4f(
+                    ((Pickable)this).pickingIndex,
+                    scene.overlay.picked == this ? 1 : 0,
+                    0,
+                    0
+                ));
 
         public bool NeedsInstancedDraw()
             => true; // TODO: cull out of screen
@@ -49,6 +60,7 @@ namespace LD60.World.Tactician
             base.DoDispose();
             scene.physics.Remove(physics);
             scene.instancers[GetType()].instancedThings.Remove(this);
+            scene.overlay.Unregister(this);
         }
     }
 }
