@@ -108,7 +108,7 @@ namespace LD60
                 shaderCode = new ShaderCodeContainer(new StreamSourceCollection(archive, StreamSources.shaderCode));
                 await shaderCode.LoadAllAsync(@"^*\.c?fx$", this);
                 await (shaders = new ShaderContainer(archive, graphics, shaderCode, monitoring, graphics.coreProfile))
-                    .LoadAllAsync(@"^*\.(fx|cfx)$", this);
+                    .LoadAllAsync(@"^*\.fx$", this);
             }
             RunTasks(
                 (textures = new TextureContainer(archive, graphics.dispatcher, monitoring)).LoadAllAsync(@"^.*\.png$", this)
