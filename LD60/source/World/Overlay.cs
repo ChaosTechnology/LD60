@@ -27,6 +27,7 @@ namespace LD60.World
         bool hasPickingData = false;
 
         public Pickable picked {get; private set;} = null;
+        public Vector3f worldPos {get; private set;} = Vector3f.NAN;
 
         public Overlay(FloatingIslands islands)
             : base(islands.game.menuContext)
@@ -73,7 +74,9 @@ namespace LD60.World
 
         void PickOnGoblins()
         {
-            int victim = SamplePickable();
+            Vector2i pixel = CursorToPixel();
+            int victim = SamplePickable(pixel);
+            worldPos = victim > 0 ? SampleWorldPos(pixel) : Vector3f.NAN;
             picked = victim > 0 ? registeredPickables[victim] : null;
         }
 
@@ -93,14 +96,13 @@ namespace LD60.World
                 );
         }
 
-        int SamplePickable()
+        int SamplePickable(Vector2i pixel)
         {
             if (!hasPickingData)
                 return 0;
 
             Framebuffer oldFb = context.graphics.stateTracker.BindFramebuffer(FramebufferTarget.Framebuffer, pickingFbo);
 
-            Vector2i pixel = CursorToPixel();
             float[] pickingIndex = new float[1];
 
             GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
@@ -116,6 +118,33 @@ namespace LD60.World
                 throw new UnreachableException($"Picking index must always be an exact integer: {pickingIndex[0]}");
 
             return cast;
+        }
+
+        Vector3f SampleWorldPos(Vector2i pixel)
+        {
+            if (!hasPickingData)
+                return 0;
+
+            Framebuffer oldFb = context.graphics.stateTracker.BindFramebuffer(
+                FramebufferTarget.Framebuffer,
+                islands.deferredShader.worldFramebuffer
+                );
+
+            byte[] worldPos = new byte[16];
+
+            GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
+            ThrowErrors();
+
+            GL.ReadPixels(pixel.x, pixel.y, 1, 1, PixelFormat.Rgba, PixelType.Float, worldPos);
+            ThrowErrors();
+
+            context.graphics.stateTracker.BindFramebuffer(FramebufferTarget.Framebuffer, oldFb);
+
+            return new Vector3f(
+                BitConverter.ToSingle(worldPos, 0),
+                BitConverter.ToSingle(worldPos, 4),
+                BitConverter.ToSingle(worldPos, 8)
+                );
         }
     }
 }
