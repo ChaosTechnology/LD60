@@ -44,7 +44,7 @@ namespace LD60.World.Tactician
                 Dispose();
         }
 
-        public void GiveMeInstances(InstancingAttribute[] instancers)
+        public virtual void GiveMeInstances(InstancingAttribute[] instancers)
             => instancers[0].informer.AddInstance(
                 physics.state.GetTransform(),
                 new Vector4f(

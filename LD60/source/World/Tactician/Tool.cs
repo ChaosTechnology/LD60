@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using ChaosFramework.Components;
 using ChaosFramework.Menu.OpenGl.Controls;
 using ChaosUtil.Reflection;
@@ -9,6 +10,9 @@ namespace LD60.World.Tactician
     public abstract class Tool
         : Component<FloatingIslands>
     {
+        static bool NotAbstract(Type t)
+            => !t.IsAbstract;
+
         protected override void Create(CreateParameters cparams)
         {
         }
@@ -21,7 +25,7 @@ namespace LD60.World.Tactician
         protected void CreatePlacableButtons(Action<Button, Type> modifyButton)
         {
             scene.overlay.subTools.CreateControl<Image>(0, 0.05f).textureSource = string.Empty;
-            foreach(Type placable in AssemblyManager.SubTypesOf<Placable>())
+            foreach(Type placable in AssemblyManager.SubTypesOf<Placable>().Where(NotAbstract))
             {
                 Button btn = scene.overlay.subTools.CreateControl<Button>(0, 0.05f, placable.Name);
                 modifyButton?.Invoke(btn, placable);

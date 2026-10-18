@@ -11,18 +11,40 @@ using ChaosFramework.Physics;
 using ChaosFramework.Shapes.Convex;
 using LD60.Instancing;
 using LD60.World.Tactician.Placables;
+using SysCol = System.Collections.Generic;
 
 namespace LD60.World.Tactician.Tools
 {
+    using PlacementInfo = (NormalMapped nor, ShapeContainer.Entry shapes, Vector3f offset);
+
     public class Place
         : Tool
     {
+        readonly SysCol.Dictionary<Type, PlacementInfo> placementCache = [];
+
         Type placable = typeof(Rock);
 
         public override void Select()
         {
             base.Select();
             CreatePlacableButtons(ModifyPlacableButton);
+        }
+
+        PlacementInfo GetPlacementInfo(Type placable)
+        {
+            if (!placementCache.TryGetValue(placable, out PlacementInfo placementInfo))
+            {
+                Vector3f offset = new(0, float.PositiveInfinity, 0);
+
+                NormalMapped info = scene.instancers[placable].instancers.OfType<NormalMapped>().Single();
+                ShapeContainer.Entry shapes = scene.game.shapes.Load(info.mesh.key.key, this);
+                foreach(Shape shape in shapes.content)
+                    offset.y = Math.Min(offset.y, shape.Support(new Vector3f(0, -1 ,0)).y);
+
+                placementCache[placable] = placementInfo = (info, shapes, offset);
+            }
+
+            return placementInfo;
         }
 
         void ModifyPlacableButton(Button btn, Type placable)
@@ -42,7 +64,8 @@ namespace LD60.World.Tactician.Tools
             if (scene.overlay.picked is Map.Segment && placable != null)
             {
                 Placable brad = (Placable)scene.AddComponent(placable);
-                brad.physics.state.position = scene.overlay.worldPos;
+                PlacementInfo placementInfo = GetPlacementInfo(placable);
+                brad.physics.state.position = scene.overlay.worldPos - placementInfo.offset;
             }
         }
 
@@ -64,17 +87,11 @@ namespace LD60.World.Tactician.Tools
             if (scene.overlay.picked is Map.Segment)
             {
                 ShaderContainer.Entry shader = scene.game.graphics.shaders.coloredNormalMap;
-                NormalMapped info = scene.instancers[placable].instancers.OfType<NormalMapped>().Single();
-
-                ShapeContainer.Entry shapes = scene.game.shapes.Load(info.mesh.key.key, this);
-                Vector3f offset = new(0, float.PositiveInfinity, 0);
-                foreach(Shape shape in shapes.content)
-                    offset.y = Math.Min(offset.y, shape.Support(new Vector3f(0, -1 ,0)).y);
-
+                PlacementInfo placementInfo = GetPlacementInfo(placable);
                 shader.SetValue("color", new Rgba(0, 0.5f, 0, 1));
-                scene.view.SetValues(shader, Matrix.Translation(scene.overlay.worldPos - offset));
-                info.material.content.SetValues(shader);
-                info.mesh.content.Draw(shader, pass);
+                scene.view.SetValues(shader, Matrix.Translation(scene.overlay.worldPos - placementInfo.offset));
+                placementInfo.nor.material.content.SetValues(shader);
+                placementInfo.nor.mesh.content.Draw(shader, pass);
             }
         }
     }
