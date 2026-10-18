@@ -18,7 +18,7 @@ namespace LD60.World
 
         protected override void Create(CreateParameters c)
         {
-            shader = scene.game.shaders.Load("shaders/picking.fx", this);
+            shader = scene.game.shaders.Load("shaders/picking_island.fx", this);
             cursorShader = scene.game.graphics.shaders.normalMap;
             cursorMesh = scene.game.meshes.Load("models/cursor.gmdl", this);
 
@@ -36,7 +36,7 @@ namespace LD60.World
         public override void SetDrawCalls()
         {
             base.SetDrawCalls();
-            scene.drawLayers[(int)DrawLayers.World].Add(DrawCursorWorld);
+            scene.drawLayers[(int)DrawLayers.WorldAfterPicking].Add(DrawCursorWorld);
             scene.drawLayers[(int)DrawLayers.Material].Add(DrawCursorMaterial);
             scene.drawLayers[(int)DrawLayers.World].Add(DrawWorld);
             scene.drawLayers[(int)DrawLayers.Material].Add(DrawMaterial);

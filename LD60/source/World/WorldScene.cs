@@ -169,6 +169,7 @@ namespace LD60.World
             });
 
             drawLayers[(int)DrawLayers.BeginWorld].Add(BeginWorld);
+            drawLayers[(int)DrawLayers.BeginWorldAfterPicking].Add(BeginWorldAfterPicking);
             drawLayers[(int)DrawLayers.BeginMaterial].Add(deferredShader.BeginMaterial);
 
             instancers.SetDrawCalls(drawLayers[(int)DrawLayers.ResetInstancers], drawLayers[(int)DrawLayers.FillInstancers]);
@@ -197,6 +198,9 @@ namespace LD60.World
             GL.ClearColor(1.0f, 1.0f, 1.0f, 1.0f);
             GL.Clear(ClearBufferMask.ColorBufferBit);
         }
+
+        void BeginWorldAfterPicking()
+            => game.graphics.stateTracker.BindFramebuffer(FramebufferTarget.Framebuffer, deferredShader.worldFramebuffer);
 
         public void ApplyAntiAliasing(Framebuffer target)
         {

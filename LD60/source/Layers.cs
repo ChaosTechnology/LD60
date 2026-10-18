@@ -9,6 +9,8 @@ namespace LD60
         World,
         BeginPicking,
         Picking,
+        BeginWorldAfterPicking,
+        WorldAfterPicking,
         BeginMaterial,
         Material,
         Sky,
