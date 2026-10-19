@@ -43,7 +43,7 @@
                     <Image
                         ratioMode="KeepRatio"
                         FlowPanel.autoScaleMode="Stretch"
-                        textureSource="textures\menu\mainmenu\logo.png"
+                        textureSource="models/coin/menu.png"
                         />
                 </Layout.FlowPanel>
 
