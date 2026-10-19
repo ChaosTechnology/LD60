@@ -10,12 +10,8 @@ namespace LD60.World
 {
     public class Hostility : Component<FloatingIslands>
     {
-        const float GOBLIN_SPAWN_INTERVAL = 3.0f;
-
-        public Vector3f goal {get; private set;}
-        public ImmutableArray<Vector3f> spawns {get; private set;}
-
-        float goblinSpawnTimer = GOBLIN_SPAWN_INTERVAL;
+        public Vector3f goal { get; private set; }
+        public ImmutableArray<Vector3f> spawns { get; private set; }
 
         protected override void Create(CreateParameters _)
         {
@@ -24,24 +20,14 @@ namespace LD60.World
 
             SysCol.HashSet<Vector3f> spawns = [];
             using (Stream str = scene.game.archive.OpenRead("models/world2/spawns.rig"))
-                foreach(Rig.Bone bone in Rig.FromStream(str).root.children)
+                foreach (Rig.Bone bone in Rig.FromStream(str).root.children)
                     spawns.Add(bone.GetPosition());
             this.spawns = spawns.ToArray();
-        }
 
-        public override void SetUpdateCalls()
-        {
-            base.SetUpdateCalls();
-            scene.updateLayers[(int)UpdateLayers.PrepareUpdate].Add(SpawnGoblins);
-        }
-
-        void SpawnGoblins()
-        {
-            if ((goblinSpawnTimer -= ftime) <= 0)
+            foreach (Vector3f spawn in spawns)
             {
-                goblinSpawnTimer += GOBLIN_SPAWN_INTERVAL;
-                Enemies.Goblin john = scene.AddComponent<Enemies.Goblin>();
-                john.physics.state.position = spawns.RandomEntry();
+                Door door = AddComponent<Door>();
+                door.physics.state.position = spawn;
             }
         }
     }

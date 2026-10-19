@@ -5,7 +5,8 @@ namespace LD60.World.Tactician.Placables
     [Tool("models/rock/rock.gmdl", "models/rock/rock.mat")]
     [Instancing.PickingInstancer(3, "models/rock/rock.gmdl", "models/rock/rock.mat")]
     public class Rock
-        : Placable
+        : StandardPickable
+        , Placable
     {
         public Rock()
             : base()
