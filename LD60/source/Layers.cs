@@ -24,6 +24,7 @@ namespace LD60
 
     public enum UpdateLayers
     {
+        ChangePhase,
         PrepareUpdate,
         Input,
         Move,

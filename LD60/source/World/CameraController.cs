@@ -7,7 +7,7 @@ using static ChaosFramework.Math.Trigonometry;
 namespace LD60.World
 {
     [Instancing.DefaultInstancer(1, "models/cube.gmdl", null)]
-    public class Player : Component<FloatingIslands>
+    public class CameraController : Component<FloatingIslands>
     {
         const float VIEW_DISTANCE = 30.0f;
         const float VIEW_HEIGHT = 20f;

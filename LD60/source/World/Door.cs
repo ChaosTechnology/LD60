@@ -16,6 +16,7 @@ namespace LD60.World
         : StandardPickable
     {
         const float GOBLIN_SPAWN_INTERVAL = 3.0f;
+        public int goblinPool;
 
         float goblinSpawnTimer = GOBLIN_SPAWN_INTERVAL;
 
@@ -40,7 +41,9 @@ namespace LD60.World
                 physics.state.GetTransform(),
                 new Vector4f(((Pickable)this).pickingIndex, scene.overlay.picked == this ? 1 : 0, 0, 0)
                 );
-            instancers[1].informer.AddInstance(transform, new Vector4f(-ftime.totalTime));
+
+            if (open > 0)
+                instancers[1].informer.AddInstance(transform, new Vector4f(-ftime.totalTime));
         }
 
         public override void SetUpdateCalls()
@@ -52,19 +55,31 @@ namespace LD60.World
 
         void UpdateAnimation()
         {
+            open = scene.phase.phase switch
+            {
+                Phase.Countdown => 1 - scene.phase.percentageLeft,
+                Phase.Horde => 1,
+                Phase.Victory => scene.phase.percentageLeft,
+                _ => 0
+            };
+
             rig.ClearAnimations();
-            open = (open + ftime) % 1;
             animation.content["Open"].SetAnimationData(rig, open);
         }
 
         void SpawnGoblins()
         {
-            if ((goblinSpawnTimer -= ftime) <= 0)
-            {
-                goblinSpawnTimer += GOBLIN_SPAWN_INTERVAL;
-                Enemies.Goblin john = scene.AddComponent<Enemies.Goblin>();
-                john.physics.state.position = physics.state.position;
-            }
+            if (scene.phase.phase == Phase.Horde)
+                if ((goblinSpawnTimer -= ftime) <= 0)
+                {
+                    goblinSpawnTimer += GOBLIN_SPAWN_INTERVAL;
+                    if (goblinPool > 0)
+                    {
+                        goblinPool--;
+                        Enemies.Goblin john = scene.AddComponent<Enemies.Goblin>();
+                        john.physics.state.position = physics.state.position;
+                    }
+                }
         }
     }
 }
