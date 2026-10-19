@@ -22,7 +22,9 @@ namespace LD60.World
     {
         readonly FloatingIslands islands;
         readonly SysCol.Dictionary<int, Pickable> registeredPickables = [];
+#if DEBUG
         readonly TextureContainer.Entry pickingPos, pickingNor;
+#endif
         readonly Framebuffer pickingFbo;
         readonly Bounds2i viewPort;
         readonly float ratio;
@@ -35,6 +37,7 @@ namespace LD60.World
 
         public readonly FlowPanel subTools;
         readonly FlowPanel tools;
+        readonly Label gold;
 
         public Tool currentTool {get; private set;}
 
@@ -59,8 +62,10 @@ namespace LD60.World
 
             Texture pos = new(islands.game.graphics.dispatcher, texParams);
             Texture nor = new(islands.game.graphics.dispatcher, texParams);
+#if DEBUG
             pickingPos = TextureContainer.Entry.Mock((_, _) => pos, _ => pos.Dispose());
             pickingNor = TextureContainer.Entry.Mock((_, _) => nor, _ => nor.Dispose());
+#endif
             pickingFbo = new Framebuffer(viewPort, [pos, nor], islands.deferredShader.depthBuffer);
 
             BuildMenu("overlay", "Root/Overlay", null, null);
@@ -92,6 +97,7 @@ namespace LD60.World
                 }
 
             subTools = panel.GetControlById("Placables") as FlowPanel;
+            gold = panel.GetControlById("Coins") as Label;
         }
 
         public void SelectDefaultTool()
@@ -114,6 +120,7 @@ namespace LD60.World
         {
             base.SetUpdateCalls();
             updateLayers[(int)UpdateLayers.HudActions].Add(PickOnGoblins);
+            updateLayers[(int)UpdateLayers.HudActions].Add(UpdateGui);
         }
 
         void PickOnGoblins()
@@ -129,6 +136,11 @@ namespace LD60.World
 
             worldPos = sample.pick > 0 ? sample.pos : Vector3f.NAN;
             picked = sample.pick > 0 ? found : null;
+        }
+
+        void UpdateGui()
+        {
+            gold.text = islands.inventory.gold.ToString();
         }
 
         public void Register(Pickable p)

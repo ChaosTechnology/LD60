@@ -1,5 +1,4 @@
 using System.Linq;
-using ChaosFramework.Collections;
 using ChaosFramework.Components;
 using ChaosFramework.Graphics.OpenGl.Instancing;
 using ChaosFramework.Graphics.OpenGl.Model;

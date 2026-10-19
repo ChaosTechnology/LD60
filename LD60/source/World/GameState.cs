@@ -20,26 +20,35 @@ namespace LD60.World
         public Phase phase { get; private set; }
         float phaseTime, phaseTimer;
 
+#if DEBUG
         Label phaseLabel;
+#endif
 
         public float percentageLeft => phaseTimer / phaseTime;
 
         protected override void Create(CreateParameters cparams)
         {
             EnterPhase(Phase.Startup, 3);
-            phaseLabel = scene.overlay.panel.CreateControl<Label>(new Vector2f(-scene.view.screenRatio, 1), 0.05f, phase.ToString());
+#if DEBUG
+            phaseLabel = scene.overlay.panel.CreateControl<Label>(new Vector2f(-scene.view.screenRatio, 0.8f), 0.05f, phase.ToString());
             phaseLabel.textAlign = Align.TopLeft;
+#endif
         }
 
         public override void SetUpdateCalls()
         {
             base.SetUpdateCalls();
-            scene.updateLayers[(int)UpdateLayers.SetCamera].Add(UpdatePhaseLabel);
             scene.updateLayers[(int)UpdateLayers.ChangePhase].Add(UpdatePhase);
+
+#if DEBUG
+            scene.updateLayers[(int)UpdateLayers.SetCamera].Add(UpdatePhaseLabel);
+#endif
         }
 
+#if DEBUG
         void UpdatePhaseLabel()
             => phaseLabel.text = $"{phase}\n{phaseTimer}";
+#endif
 
         void UpdatePhase()
         {

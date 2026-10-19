@@ -22,7 +22,7 @@ namespace LD60.World.Tactician.Tools
     {
         readonly SysCol.Dictionary<Type, PlacementInfo> placementCache = [];
 
-        Type placable = typeof(Rock);
+        public Type placable = typeof(Rock);
 
         PlacementInfo GetPlacementInfo(Type placable)
         {
@@ -51,6 +51,21 @@ namespace LD60.World.Tactician.Tools
 
             btn.enabledFunction = Enabled;
             btn.mouseDownLeft += Select;
+        }
+
+        public override void Select()
+        {
+            base.Select();
+            if (placable == null || scene.inventory.GetArsenal(placable) <= 0)
+            {
+                placable = null;
+                foreach(ChaosUtil.Reflection.TypeWithAttribute<PlacableAttribute> p in placables)
+                    if (scene.inventory.GetArsenal(p.type) > 0)
+                    {
+                        placable = p.type;
+                        break;
+                    }
+            }
         }
 
         public override void Activate()
