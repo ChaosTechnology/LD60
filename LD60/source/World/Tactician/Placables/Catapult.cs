@@ -6,6 +6,7 @@ using ChaosFramework.Math;
 using ChaosFramework.Math.Vectors;
 using ChaosFramework.Shapes.Rigging;
 using LD60.World.Enemies;
+using static ChaosFramework.Math.Clamping;
 
 namespace LD60.World.Tactician.Placables
 {
@@ -15,9 +16,13 @@ namespace LD60.World.Tactician.Placables
         : AnimatedPlacable
     {
         const float COOLDOWN = 3;
+        static float MAX_TURNING_RADIANS_PER_SECOND = 9; // fast
 
         float shootProgress;
         float cooldownTimer = 1;
+        float facingAngle;
+        Goblin target = null;
+        Vector3f launchPoint => physics.state.position + new Vector3f(0, 3, 0);
 
         public Catapult()
             : base()
@@ -53,14 +58,30 @@ namespace LD60.World.Tactician.Placables
         {
             if (scene.phase.phase == Phase.Horde)
             {
-                if ((cooldownTimer -= ftime) < 0)
+                cooldownTimer -= ftime;
+                if (cooldownTimer < 0.5f)
                 {
-                    Goblin[] candidates = scene.EnumerateChildren<Goblin>(true).ToArray();
-                    if (candidates.Length > 0)
+                    if (!target?.alive != true || target?.health < 0)
                     {
-                        cooldownTimer = COOLDOWN;
-                        Vector3f launchPoint = physics.state.position + new Vector3f(0, 3, 0);
-                        Goblin target = candidates.MinBy(x => (x.physics.state.position - launchPoint).LengthSq());
+                        Goblin[] candidates = scene.EnumerateChildren<Goblin>(true).ToArray();
+                        target = candidates.MinBy(x => (x.physics.state.position - launchPoint).LengthSq());
+                    }
+
+                    if (target != null)
+                        facingAngle = AngleHelper.TurnTowards(
+                            facingAngle,
+                            -(target.physics.state.position - physics.state.position), // randomly negate this lol
+                            MAX_TURNING_RADIANS_PER_SECOND * ftime
+                            );
+                }
+                if (cooldownTimer < 0.2f)
+                    shootProgress = 0.9999f - Max(cooldownTimer / 0.2f, 0);
+
+                if (cooldownTimer < 0)
+                {
+                    cooldownTimer = COOLDOWN;
+                    if (target != null)
+                    {
                         float estimatedTravelTime = (target.physics.state.position - launchPoint).Length() / 10.0f;
                         Vector3f estimatedTargetPosition = target.physics.state.position + target.physics.state.velocity * estimatedTravelTime;
                         Vector3f launchVelocity = ChaosFramework.Physics.ProjectileLaunchCalculator.GetLaunchVelocity(
@@ -79,12 +100,13 @@ namespace LD60.World.Tactician.Placables
                     }
                 }
             }
+
+            physics.state.baseTransform = Matrix.RotationY(facingAngle);
         }
 
         protected override void UpdateAnimation()
         {
             base.UpdateAnimation();
-            shootProgress = (shootProgress + ftime) % 1; // TODO: shoot, not loop
             anim.content["Shoot"].SetAnimationData(rig, float.IsNaN(shootProgress) ? 0 : shootProgress);
         }
     }

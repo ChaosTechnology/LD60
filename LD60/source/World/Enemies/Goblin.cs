@@ -27,7 +27,7 @@ namespace LD60.World.Enemies
         static float RandomAmbientTime()
             => Random.instance.Rnd(2.5f, 8.7f) * 4;
 
-        float health = 100.0f;
+        public float health { get; private set; } = 100.0f;
 
         float scale = 1.0f;
         float determination = 1.0f;
@@ -177,10 +177,7 @@ namespace LD60.World.Enemies
                 physics.state.ApplyForce(new Vector3f(delta.x, 0, delta.y) * WALKING_STRENGTH, physics.state.position, ftime);
             }
 
-            float target = (float)System.Math.Atan2(physics.state.velocity.x, physics.state.velocity.z);
-            float difference = (float)System.Math.Atan2(Sin(target - facingAngle), Cos(target - facingAngle));
-            float step = Clamp(-MAX_TURNING_RADIANS_PER_SECOND * ftime, MAX_TURNING_RADIANS_PER_SECOND * ftime, difference);
-            facingAngle += step;
+            facingAngle = AngleHelper.TurnTowards(facingAngle, physics.state.velocity, MAX_TURNING_RADIANS_PER_SECOND * ftime);
 
             physics.state.baseTransform = Matrix.Scaling(scale) * Matrix.RotationY(facingAngle + PI);
             physics.state.Move(ftime);
