@@ -19,6 +19,7 @@ namespace LD60.World
         public readonly Overlay overlay;
         public readonly Hostility hostility;
         public readonly Map map;
+        public readonly GameState phase;
 
         bool mustInsertOverlay = true;
 
@@ -41,10 +42,11 @@ namespace LD60.World
 
             map = new Map(this);
             hostility = AddComponent<Hostility>();
+            phase = AddComponent<GameState>();
 
             AddComponent<World>();
             AddComponent<Skybox>();
-            AddComponent<Player>();
+            AddComponent<CameraController>();
 
             pause = new Menu.PauseMenu(this)
             {
