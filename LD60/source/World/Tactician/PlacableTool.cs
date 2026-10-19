@@ -3,6 +3,7 @@ using System.Linq;
 using ChaosFramework.Collections.Immutable;
 using ChaosFramework.Menu.OpenGl.Controls;
 using ChaosUtil.Reflection;
+using LD60.Tactician;
 
 namespace LD60.World.Tactician
 {
@@ -27,13 +28,13 @@ namespace LD60.World.Tactician
             scene.overlay.subTools.CreateControl<Image>(0, 0.05f).textureSource = string.Empty;
             foreach(Type placable in AssemblyManager.SubTypesOf<Placable>().Where(NotAbstract))
             {
-                Button btn = scene.overlay.subTools.CreateControl<Button>(0, 0.05f, placable.Name);
+                ToolButton btn = scene.overlay.subTools.CreateControl<ToolButton>(0, 0.05f, placable.Name);
                 ModifyPlacableButton(btn, placable);
             }
             scene.overlay.panel.Layout();
         }
 
-        protected abstract void ModifyPlacableButton(Button btn, Type placable);
+        protected abstract void ModifyPlacableButton(ToolButton btn, Type placable);
 
     }
 }

@@ -2,7 +2,7 @@ using ChaosFramework.Components;
 
 namespace LD60.World.Tactician.Placables
 {
-    [Placable("models/rock/rock.gmdl", "models/rock/rock.mat", 10)]
+    [Placable("models/rock/rock.gmdl", "models/rock/rock.mat", 10, 0.5f)]
     [Instancing.PickingInstancer(3, "models/rock/rock.gmdl", "models/rock/rock.mat")]
     public class Rock
         : StandardPickable

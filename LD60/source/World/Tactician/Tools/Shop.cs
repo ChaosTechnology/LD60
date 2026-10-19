@@ -1,15 +1,15 @@
 using System;
 using System.Linq;
 using ChaosFramework.Menu.OpenGl;
-using ChaosFramework.Menu.OpenGl.Controls;
 using ChaosUtil.Reflection;
+using LD60.Tactician;
 
 namespace LD60.World.Tactician.Tools
 {
     public class Shop
         : PlacableTool
     {
-        protected override void ModifyPlacableButton(Button btn, Type placable)
+        protected override void ModifyPlacableButton(ToolButton btn, Type placable)
         {
             TypeWithAttribute<PlacableAttribute> info = placables.Single(t => t.type == placable);
 

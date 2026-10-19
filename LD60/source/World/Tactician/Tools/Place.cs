@@ -6,10 +6,10 @@ using ChaosFramework.Graphics.OpenGl.AssetContainers;
 using ChaosFramework.Math;
 using ChaosFramework.Math.Vectors;
 using ChaosFramework.Menu.OpenGl;
-using ChaosFramework.Menu.OpenGl.Controls;
 using ChaosFramework.Physics;
 using ChaosFramework.Shapes.Convex;
 using LD60.Instancing;
+using LD60.Tactician;
 using LD60.World.Tactician.Placables;
 using SysCol = System.Collections.Generic;
 
@@ -22,7 +22,10 @@ namespace LD60.World.Tactician.Tools
     {
         readonly SysCol.Dictionary<Type, PlacementInfo> placementCache = [];
 
+        // TODO: capture TypeWithAttribute<PlacableAttribute> here
         public Type placable = typeof(Rock);
+
+        public float cooldown = 0;
 
         PlacementInfo GetPlacementInfo(Type placable)
         {
@@ -41,7 +44,7 @@ namespace LD60.World.Tactician.Tools
             return placementInfo;
         }
 
-        protected override void ModifyPlacableButton(Button btn, Type placable)
+        protected override void ModifyPlacableButton(ToolButton btn, Type placable)
         {
             bool Enabled()
                 => placable != this.placable && (scene.inventory.GetArsenal(placable) > 0);
@@ -49,6 +52,10 @@ namespace LD60.World.Tactician.Tools
             void Select(Control _)
                 => this.placable = placable;
 
+            (bool, float) GetToolInfo()
+                => (this.placable == placable, cooldown);
+
+            btn.getToolInfo = GetToolInfo;
             btn.enabledFunction = Enabled;
             btn.mouseDownLeft += Select;
         }
@@ -78,6 +85,8 @@ namespace LD60.World.Tactician.Tools
                     PlacementInfo placementInfo = GetPlacementInfo(placable);
                     brad.physics.state.position = scene.overlay.worldPos - placementInfo.offset;
                     brad.Init();
+
+                    cooldown = placables.Single(t => t.type == placable).attribute.cooldown;
                 }
         }
 
@@ -96,7 +105,7 @@ namespace LD60.World.Tactician.Tools
 
         void Draw(string pass)
         {
-            if (scene.overlay.picked is Map.Segment)
+            if (scene.overlay.picked is Map.Segment && placable != null)
             {
                 ShaderContainer.Entry shader = scene.game.graphics.shaders.coloredNormalMap;
                 PlacementInfo placementInfo = GetPlacementInfo(placable);

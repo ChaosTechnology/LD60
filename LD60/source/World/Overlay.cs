@@ -8,6 +8,7 @@ using ChaosFramework.Menu.OpenGl;
 using ChaosFramework.Menu.OpenGl.Controls;
 using ChaosFramework.Menu.OpenGl.Controls.Layout;
 using ChaosUtil.Reflection;
+using LD60.Tactician;
 using LD60.World.Tactician;
 using OpenTK.Graphics.OpenGL;
 using static ChaosFramework.Graphics.OpenGl.Graphics;
@@ -20,7 +21,7 @@ namespace LD60.World
     public class Overlay
         : DialogScene
     {
-        readonly FloatingIslands islands;
+        public readonly FloatingIslands islands;
         readonly SysCol.Dictionary<int, Pickable> registeredPickables = [];
 #if DEBUG
         readonly TextureContainer.Entry pickingPos, pickingNor;
@@ -81,7 +82,10 @@ namespace LD60.World
                 if (!toolType.IsAbstract)
                 {
                     Tool tool = (Tool)islands.AddComponent(toolType);
-                    Button btn = tools.CreateControl<Button>(0, 0.05f, toolType.Name);
+                    ToolButton btn = tools.CreateControl<ToolButton>(0, 0.05f, toolType.Name);
+
+                    (bool, float) GetToolButtonInfo()
+                        => (currentTool == tool, 0);
 
                     bool Enabled()
                         => tool.Allowed() && islands.overlay.currentTool != tool;
@@ -92,6 +96,7 @@ namespace LD60.World
                         tool.Select();
                     }
 
+                    btn.getToolInfo = GetToolButtonInfo;
                     btn.enabledFunction = Enabled;
                     btn.mouseDownLeft += Select;
                 }
