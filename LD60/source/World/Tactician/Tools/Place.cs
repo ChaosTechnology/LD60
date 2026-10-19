@@ -25,7 +25,7 @@ namespace LD60.World.Tactician.Tools
         // TODO: capture TypeWithAttribute<PlacableAttribute> here
         public Type placable = typeof(Rock);
 
-        public float cooldown = 0;
+        public float coooooooldown, cooldown = 0;
 
         PlacementInfo GetPlacementInfo(Type placable)
         {
@@ -35,8 +35,8 @@ namespace LD60.World.Tactician.Tools
 
                 NormalMapped info = scene.instancers[placable].instancers.OfType<NormalMapped>().Single();
                 ShapeContainer.Entry shapes = scene.game.shapes.Load(info.mesh.key.key, this);
-                foreach(Shape shape in shapes.content)
-                    offset.y = Math.Min(offset.y, shape.Support(new Vector3f(0, -1 ,0)).y);
+                foreach (Shape shape in shapes.content)
+                    offset.y = Math.Min(offset.y, shape.Support(new Vector3f(0, -1, 0)).y);
 
                 placementCache[placable] = placementInfo = (info, shapes, offset);
             }
@@ -53,7 +53,7 @@ namespace LD60.World.Tactician.Tools
                 => this.placable = placable;
 
             (bool, float) GetToolInfo()
-                => (this.placable == placable, cooldown);
+                => (this.placable == placable, cooldown / coooooooldown);
 
             btn.getToolInfo = GetToolInfo;
             btn.enabledFunction = Enabled;
@@ -66,7 +66,7 @@ namespace LD60.World.Tactician.Tools
             if (placable == null || scene.inventory.GetArsenal(placable) <= 0)
             {
                 placable = null;
-                foreach(ChaosUtil.Reflection.TypeWithAttribute<PlacableAttribute> p in placables)
+                foreach (ChaosUtil.Reflection.TypeWithAttribute<PlacableAttribute> p in placables)
                     if (scene.inventory.GetArsenal(p.type) > 0)
                     {
                         placable = p.type;
@@ -77,18 +77,30 @@ namespace LD60.World.Tactician.Tools
 
         public override void Activate()
         {
-            if (scene.overlay.picked is Map.Segment && placable != null)
-                if (scene.inventory.GetArsenal(placable) > 0)
-                {
-                    scene.inventory.Use(placable);
-                    Placable brad = (Placable)scene.AddComponent(placable);
-                    PlacementInfo placementInfo = GetPlacementInfo(placable);
-                    brad.physics.state.position = scene.overlay.worldPos - placementInfo.offset;
-                    brad.Init();
+            if (placable != null
+                && cooldown <= 0
+                && scene.overlay.picked is Map.Segment
+                && scene.inventory.GetArsenal(placable) > 0
+                )
+            {
+                scene.inventory.Use(placable);
+                Placable brad = (Placable)scene.AddComponent(placable);
+                PlacementInfo placementInfo = GetPlacementInfo(placable);
+                brad.physics.state.position = scene.overlay.worldPos - placementInfo.offset;
+                brad.Init();
 
-                    cooldown = placables.Single(t => t.type == placable).attribute.cooldown;
-                }
+                coooooooldown = cooldown = placables.Single(t => t.type == placable).attribute.cooldown;
+            }
         }
+
+        protected override void SetUpdateCalls2()
+        {
+            base.SetUpdateCalls2();
+            scene.updateLayers[(int)UpdateLayers.UpdateParticles].Add(DecrementCooldown);
+        }
+
+        void DecrementCooldown()
+            => cooldown -= ftime;
 
         protected override void SetDrawCalls2()
         {

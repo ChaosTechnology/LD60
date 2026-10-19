@@ -14,9 +14,10 @@ namespace LD60.World.Tactician.Placables
     public class Catapult
         : AnimatedPlacable
     {
+        const float COOLDOWN = 3;
+
         float shootProgress;
         float cooldownTimer = 1;
-        float cooldown = 3;
 
         public Catapult()
             : base()
@@ -57,7 +58,7 @@ namespace LD60.World.Tactician.Placables
                     Goblin[] candidates = scene.EnumerateChildren<Goblin>(true).ToArray();
                     if (candidates.Length > 0)
                     {
-                        cooldownTimer = cooldown;
+                        cooldownTimer = COOLDOWN;
                         Vector3f launchPoint = physics.state.position + new Vector3f(0, 3, 0);
                         Goblin target = candidates.MinBy(x => (x.physics.state.position - launchPoint).LengthSq());
                         float estimatedTravelTime = (target.physics.state.position - launchPoint).Length() / 10.0f;

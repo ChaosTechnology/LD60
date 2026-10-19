@@ -9,7 +9,6 @@ using ChaosFramework.Physics;
 using ChaosFramework.Shapes.Convex;
 using ChaosFramework.Shapes.Rigging;
 using ChaosUtil.Primitives;
-using LD60.Menu;
 using LD60.World.Tactician.Placables;
 using static ChaosFramework.Math.Clamping;
 using static ChaosFramework.Math.Constants;
