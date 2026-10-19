@@ -209,25 +209,33 @@ namespace LD60.World.Enemies
             {
                 screaming = true;
                 scene.enemySounds.Play(Sounds.Kind.GoblinFalling);
+                DropMoney(10, true);
             }
 
             if (physics.state.position.y < FloatingIslands.DEATH_PLANE)
-                Die(10);
+                Dispose();
             else if (health < 0)
-                Die(25);
+            {
+                Die();
+                DropMoney(25, false);
+            }
         }
 
-        void Die(int coinValue)
+        void Die()
         {
-            Dispose();
-
             // TODO: fall over and turn into corpse
+            Dispose();
             scene.fire.Explode(physics.state.position, 12, new(1.0f, 1.7f, 0.2f));
+        }
 
+        void DropMoney(int coinValue, bool autocollect)
+        {
             Coin c = scene.AddComponent<Coin>();
             c.value = coinValue;
             Vector3f off = c.physics.shapes[0].Support(new Vector3f(0, -1, 0));
             c.physics.state.position = physics.state.position - new Vector3f(0, off.y, 0);
+            if (autocollect)
+                c.Collect();
         }
 
         void Instancable.GiveMeInstances(InstancingAttribute[] instancers)
