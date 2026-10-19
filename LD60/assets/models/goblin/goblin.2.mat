@@ -1,2 +1,3 @@
 diffuse:  models/goblin/diffuse.2.png
-specular: models/goblin/normal.png
+normal: models/goblin/normal.png
+specular: models/goblin/specular.png
