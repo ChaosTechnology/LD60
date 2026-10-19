@@ -14,6 +14,7 @@ using static ChaosFramework.Math.Clamping;
 using static ChaosFramework.Math.Constants;
 using static ChaosFramework.Math.Trigonometry;
 using static ChaosFramework.Math.Exponentials;
+using LD60.World.Tactician.Placables;
 
 namespace LD60.World.Enemies
 {
@@ -23,6 +24,8 @@ namespace LD60.World.Enemies
     public class Goblin : Component<FloatingIslands>, Instancable, Pickable
     {
         const float MAX_TURNING_RADIANS_PER_SECOND = 2.0f;
+
+        float health = 100.0f;
 
         float scale = 1.0f;
         float determination = 1.0f;
@@ -174,8 +177,23 @@ namespace LD60.World.Enemies
 
         void ConsiderSuicide()
         {
-            if (physics.state.position.y < FloatingIslands.DEATH_PLANE)
+            foreach (CollisionData collision in physics.currentCollisions)
+            {
+                Physical other = collision.p1.creator == this ? collision.p2 : collision.p1;
+                if (other.creator is Rock oha)
+                    foreach (var data in collision.data)
+                        {
+                            float damage = (float)System.Math.Log2((data.v1 - data.v2).Length() * other.state.mass);
+                            if (damage > 1.0f)
+                                health -= damage;
+                        }
+            }
+
+            if (physics.state.position.y < FloatingIslands.DEATH_PLANE || health < 0)
+            {
+                scene.fire.Explode(physics.state.position, 12, new(1.0f, 1.7f, 0.2f));
                 Dispose();
+            }
         }
 
         void Instancable.GiveMeInstances(InstancingAttribute[] instancers)

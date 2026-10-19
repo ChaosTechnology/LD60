@@ -73,7 +73,7 @@ namespace LD60.World.Tactician.Placables
                         rock.physics.Teleport(launchPoint);
                         rock.physics.state.velocity = launchVelocity;
                         rock.physics.state.contactFriction = 0.2f;
-                        rock.physics.state.mass = 100;
+                        rock.physics.state.mass = 350;
                         rock.physics.state.baseTransform = Matrix.Scaling(0.5f);
                     }
                 }
