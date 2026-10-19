@@ -79,7 +79,7 @@ namespace LD60.World
                     Button btn = tools.CreateControl<Button>(0, 0.05f, toolType.Name);
 
                     bool Enabled()
-                        => islands.overlay.currentTool != tool;
+                        => tool.Allowed() && islands.overlay.currentTool != tool;
 
                     void Select(Control _)
                     {
@@ -98,6 +98,8 @@ namespace LD60.World
         {
             Button startupTool = tools.EnumerateChildren<Button>(false).First();
             startupTool.mouseDownLeft(startupTool);
+            if (!currentTool.Allowed())
+                throw new InvalidOperationException("Default tool selection should select tool by type, not order.");
         }
 
         public void BeginPicking()

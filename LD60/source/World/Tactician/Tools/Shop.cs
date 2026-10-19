@@ -31,5 +31,8 @@ namespace LD60.World.Tactician.Tools
 
         public override void Activate()
         { }
+
+        public override bool Allowed()
+            => scene.phase.phase == Phase.Strategize;
     }
 }

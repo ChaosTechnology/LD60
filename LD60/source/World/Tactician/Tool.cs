@@ -43,5 +43,8 @@ namespace LD60.World.Tactician
 
         protected virtual void SetDrawCalls2()
         {}
+
+        public virtual bool Allowed()
+            => true;
     }
 }

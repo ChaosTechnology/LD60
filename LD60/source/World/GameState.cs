@@ -21,13 +21,9 @@ namespace LD60.World
 
         public float percentageLeft => phaseTimer / phaseTime;
 
-        public GameState()
-        {
-            EnterPhase(Phase.Startup, 3);
-        }
-
         protected override void Create(CreateParameters cparams)
         {
+            EnterPhase(Phase.Startup, 3);
             phaseLabel = scene.overlay.panel.CreateControl<Label>(new Vector2f(-scene.view.screenRatio, 1), 0.05f, phase.ToString());
             phaseLabel.textAlign = Align.TopLeft;
         }
@@ -105,6 +101,8 @@ namespace LD60.World
         {
             this.phase = phase;
             this.phaseTime = phaseTimer = phaseTime;
+            if (!(scene.overlay.currentTool?.Allowed() ?? false))
+                scene.overlay.SelectDefaultTool();
         }
 
         void BeginStrategize()
