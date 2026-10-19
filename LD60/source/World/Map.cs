@@ -29,11 +29,11 @@ namespace LD60.World
             {
                 map.scene.overlay.Register(this);
 
-                using (StreamReader materialsReader = new(map.scene.game.archive.OpenRead($"{source}/mesh.gmdl.materials")))
-                    usedMaterials = materialsReader.ReadToEnd().Split(LINE_BREAKS, System.StringSplitOptions.RemoveEmptyEntries);
+                if (map.scene.game.meshes.TryLoad($"{source}/mesh.gmdl", out mesh, map))
+                    using (StreamReader materialsReader = new(map.scene.game.archive.OpenRead($"{source}/mesh.gmdl.materials")))
+                        usedMaterials = materialsReader.ReadToEnd().Split(LINE_BREAKS, System.StringSplitOptions.RemoveEmptyEntries);
 
-                mesh = map.scene.game.meshes.Load($"{source}/mesh.gmdl", map);
-                shapes = map.scene.game.shapes.Load($"{source}/shapes.obj", map);
+                map.scene.game.shapes.TryLoad($"{source}/shapes.obj", out shapes, map);
 
                 if (!map.scene.game.shapes.TryLoad($"{source}/area.obj", out home, map))
                     home = map.scene.game.shapes.Load($"{source}/shapes.obj", map);
@@ -98,8 +98,10 @@ namespace LD60.World
             Path sideToTreasure = new(this, $"{WORLD}bridge.side_to_treasure", treasure);
 
             Island middle = new(this, $"{WORLD}island.middle", middleToTreasure);
-            Path spawn3ToMiddle = new(this, $"{WORLD}bridge.spawn3_to_middle", middle);
-            Path spawn2ToMiddle = new(this, $"{WORLD}bridge.spawn2_to_middle", middle);
+            Path funnel = new(this, $"{WORLD}funnel.middle", middle);
+            Island funnelIsland = new(this, $"{WORLD}funnel.middle", funnel);
+            Path spawn3ToMiddle = new(this, $"{WORLD}bridge.spawn3_to_middle", funnelIsland);
+            Path spawn2ToMiddle = new(this, $"{WORLD}bridge.spawn2_to_middle", funnelIsland);
 
             Island spawn1 = new(this, $"{WORLD}island.spawn1", spawn3ToMiddle); // TODO: the island should be called spawn3
 
@@ -107,14 +109,23 @@ namespace LD60.World
             Path tinyToSide = new(this, $"{WORLD}bridge.middle_to_side", middle); // TODO: the path should be called tiny_to_side
             Island tiny = new(this, $"{WORLD}island.tiny", tinyToSide);
 
-            Path spawn1ToTiny = new(this, $"{WORLD}bridge.spawn3_to_tiny", middle); // TODO: the path should be called spawn1_to_tiny
-            Path spawn2ToTiny = new(this, $"{WORLD}bridge.spawn2_to_tiny", middle);
+            Path spawn1ToTiny = new(this, $"{WORLD}bridge.spawn3_to_tiny", tiny); // TODO: the path should be called spawn1_to_tiny
+            Path spawn2ToTiny = new(this, $"{WORLD}bridge.spawn2_to_tiny", tiny);
 
             Island spawn3 = new(this, $"{WORLD}island.spawn3", spawn1ToTiny);
             Island spawn2 = new(this, $"{WORLD}island.spawn2", spawn2ToMiddle, spawn2ToTiny);
 
-            islands = new[] { middle, treasure, sidevector, spawn1, spawn2, spawn3, tiny };
-            paths = new [] { middleToTreasure, sideToTreasure, spawn3ToMiddle, spawn2ToMiddle, tinyToSide, spawn1ToTiny, spawn2ToTiny };
+            islands = new[] { treasure, middle, funnelIsland, sidevector, spawn1, spawn2, spawn3, tiny };
+            paths = new [] {
+                middleToTreasure,
+                sideToTreasure,
+                funnel,
+                spawn3ToMiddle,
+                spawn2ToMiddle,
+                tinyToSide,
+                spawn1ToTiny,
+                spawn2ToTiny
+                };
         }
 
         public SysCol.IEnumerable<Segment> EnumerateSegments()

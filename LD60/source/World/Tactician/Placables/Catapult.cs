@@ -6,8 +6,8 @@ using ChaosFramework.Shapes.Rigging;
 
 namespace LD60.World.Tactician.Placables
 {
-    [Tool("models/catapult/catapult.gmdl", "models/catapult/catapult.mat")]
-    [Instancing.AnimatedPickableInstancer(3, "models/catapult/catapult.gmdl", "models/catapult/catapult.mat")]
+    [Tool("models/catapult/catapult.agmdl", "models/catapult/catapult.mat")]
+    [Instancing.AnimatedPickableInstancer(3, "models/catapult/catapult.agmdl", "models/catapult/catapult.mat")]
     public class Catapult
         : AnimatedPlacable
     {
@@ -22,7 +22,7 @@ namespace LD60.World.Tactician.Placables
         protected override void Create(CreateParameters cparams)
         {
             base.Create(cparams);
-            physics.shapes.Add(scene.game.shapes.Load("models/catapult/catapult.gmdl", this));
+            physics.shapes.Add(scene.game.shapes.Load("models/catapult/catapult.agmdl", this));
             rig = Rig.FromStream(scene.game.archive.OpenRead("models/catapult/catapult.rig"));
             anim = scene.game.animations.Load("models/catapult/catapult.anim", this);
         }

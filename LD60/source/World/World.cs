@@ -40,8 +40,13 @@ namespace LD60.World
             string[] names = ["normal", "emissive", "diffuse", "specular"];
             foreach (Map.Segment segment in scene.map.EnumerateSegments())
             {
+                if (segment.shapes != null)
+                    physics.AddShape(segment.shapes);
+
+                if (segment.mesh == null)
+                    continue;
+
                 mapSegmemts.Add(new MapSegmentInfo(segment));
-                physics.AddShape(segment.shapes);
                 foreach (string matName in segment.usedMaterials)
                     for (int i = 0; i < names.Length; i++)
                     {

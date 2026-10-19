@@ -31,6 +31,8 @@ namespace LD60
         PostCollision,
         CreateParticles,
         UpdateParticles,
+        ClearAnimations,
+        UpdateAnimations,
         SetCamera,
     }
 
