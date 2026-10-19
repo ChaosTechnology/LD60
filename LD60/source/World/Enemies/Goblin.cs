@@ -1,3 +1,4 @@
+using System.Drawing;
 using System.Linq;
 using ChaosFramework.Components;
 using ChaosFramework.Graphics.OpenGl.AssetContainers;
@@ -22,9 +23,13 @@ namespace LD60.World.Enemies
     public class Goblin : Component<FloatingIslands>, Instancable, Pickable
     {
         const float MAX_TURNING_RADIANS_PER_SECOND = 2.0f;
-        float TARGET_SPEED => 3.5f;
+
+        float scale = 1.0f;
+        float determination = 1.0f;
+
+        float TARGET_SPEED => 3.5f * determination;
         float SPEED_KEEP_AHEAD => 1.1f;
-        float WALKING_STRENGTH => 4;
+        float WALKING_STRENGTH => 4 * physics.state.mass;
 
         public readonly Physical physics;
 
@@ -52,6 +57,10 @@ namespace LD60.World.Enemies
             animation = scene.game.animations.Load("models/goblin/goblin.anim", this);
             scene.instancers[typeof(Goblin)].instancedThings.Add(this);
             scene.overlay.Register(this);
+
+            determination = Random.instance.Rnd(1.0f, 1.5f);
+            scale = Random.instance.Rnd(1.5f, 4.0f);
+            physics.state.mass = 40.0f * scale;
         }
 
         public override void SetUpdateCalls()
@@ -155,7 +164,7 @@ namespace LD60.World.Enemies
             float step = Clamp(-MAX_TURNING_RADIANS_PER_SECOND * ftime, MAX_TURNING_RADIANS_PER_SECOND * ftime, difference);
             facingAngle += step;
 
-            physics.state.baseTransform = Matrix.RotationY(facingAngle + PI);
+            physics.state.baseTransform = Matrix.Scaling(scale) * Matrix.RotationY(facingAngle + PI);
             physics.state.Move(ftime);
             rig.ClearAnimations();
             walkProgress = (walkProgress + ftime * physics.state.velocity.xz.Length()) % 1;
