@@ -10,7 +10,7 @@ using LD60.World.Enemies;
 
 namespace LD60.World.Tactician.Placables
 {
-    [Tool("models/catapult/catapult.agmdl", "models/catapult/catapult.mat")]
+    [Placable("models/catapult/catapult.agmdl", "models/catapult/catapult.mat", 100)]
     [Instancing.AnimatedPickableInstancer(3, "models/catapult/catapult.agmdl", "models/catapult/catapult.mat")]
     public class Catapult
         : AnimatedPlacable

@@ -5,6 +5,7 @@ using ChaosFramework.Input;
 using ChaosFramework.Input.InputEvents;
 using ChaosFramework.Math.Vectors;
 using LD60.Input;
+using LD60.World.Tactician;
 
 namespace LD60.World
 {
@@ -16,6 +17,7 @@ namespace LD60.World
 
         readonly Menu.PauseMenu pause;
 
+        public readonly Inventory inventory = new();
         public readonly Overlay overlay;
         public readonly Hostility hostility;
         public readonly Map map;

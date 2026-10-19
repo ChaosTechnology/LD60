@@ -1,11 +1,10 @@
+using System.Linq;
+using ChaosFramework.Collections;
 using ChaosFramework.Components;
 using ChaosFramework.Graphics;
 using ChaosFramework.Math.Vectors;
 using ChaosFramework.Menu.OpenGl;
-using SysCol = System.Collections.Generic;
 using ChaosFramework.Menu.OpenGl.Controls;
-using System.Linq;
-using ChaosFramework.Collections;
 using LD60.World.Enemies;
 
 namespace LD60.World
@@ -25,13 +24,9 @@ namespace LD60.World
 
         public float percentageLeft => phaseTimer / phaseTime;
 
-        public GameState()
-        {
-            EnterPhase(Phase.Startup, 3);
-        }
-
         protected override void Create(CreateParameters cparams)
         {
+            EnterPhase(Phase.Startup, 3);
             phaseLabel = scene.overlay.panel.CreateControl<Label>(new Vector2f(-scene.view.screenRatio, 1), 0.05f, phase.ToString());
             phaseLabel.textAlign = Align.TopLeft;
         }
@@ -114,6 +109,8 @@ namespace LD60.World
         {
             this.phase = phase;
             this.phaseTime = phaseTimer = phaseTime;
+            if (!(scene.overlay.currentTool?.Allowed() ?? false))
+                scene.overlay.SelectDefaultTool();
         }
 
         void BeginStrategize()

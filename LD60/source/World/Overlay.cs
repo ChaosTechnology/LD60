@@ -73,22 +73,23 @@ namespace LD60.World
 
             tools = panel.GetControlById("Tools") as FlowPanel;
             foreach(Type toolType in AssemblyManager.SubTypesOf<Tool>())
-            {
-                Tool tool = (Tool)islands.AddComponent(toolType);
-                Button btn = tools.CreateControl<Button>(0, 0.05f, toolType.Name);
-
-                bool Enabled()
-                    => islands.overlay.currentTool != tool;
-
-                void Select(Control _)
+                if (!toolType.IsAbstract)
                 {
-                    islands.overlay.currentTool = tool;
-                    tool.Select();
-                }
+                    Tool tool = (Tool)islands.AddComponent(toolType);
+                    Button btn = tools.CreateControl<Button>(0, 0.05f, toolType.Name);
 
-                btn.enabledFunction = Enabled;
-                btn.mouseDownLeft += Select;
-            }
+                    bool Enabled()
+                        => tool.Allowed() && islands.overlay.currentTool != tool;
+
+                    void Select(Control _)
+                    {
+                        islands.overlay.currentTool = tool;
+                        tool.Select();
+                    }
+
+                    btn.enabledFunction = Enabled;
+                    btn.mouseDownLeft += Select;
+                }
 
             subTools = panel.GetControlById("Placables") as FlowPanel;
         }
@@ -97,6 +98,8 @@ namespace LD60.World
         {
             Button startupTool = tools.EnumerateChildren<Button>(false).First();
             startupTool.mouseDownLeft(startupTool);
+            if (!currentTool.Allowed())
+                throw new InvalidOperationException("Default tool selection should select tool by type, not order.");
         }
 
         public void BeginPicking()

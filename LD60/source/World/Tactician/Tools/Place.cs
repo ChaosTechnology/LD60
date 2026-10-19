@@ -18,17 +18,11 @@ namespace LD60.World.Tactician.Tools
     using PlacementInfo = (NormalMapped nor, ShapeContainer.Entry shapes, Vector3f offset);
 
     public class Place
-        : Tool
+        : PlacableTool
     {
         readonly SysCol.Dictionary<Type, PlacementInfo> placementCache = [];
 
         Type placable = typeof(Rock);
-
-        public override void Select()
-        {
-            base.Select();
-            CreatePlacableButtons(ModifyPlacableButton);
-        }
 
         PlacementInfo GetPlacementInfo(Type placable)
         {
@@ -47,10 +41,10 @@ namespace LD60.World.Tactician.Tools
             return placementInfo;
         }
 
-        void ModifyPlacableButton(Button btn, Type placable)
+        protected override void ModifyPlacableButton(Button btn, Type placable)
         {
             bool Enabled()
-                => placable != this.placable;
+                => placable != this.placable && (scene.inventory.GetArsenal(placable) > 0);
 
             void Select(Control _)
                 => this.placable = placable;
@@ -62,12 +56,14 @@ namespace LD60.World.Tactician.Tools
         public override void Activate()
         {
             if (scene.overlay.picked is Map.Segment && placable != null)
-            {
-                Placable brad = (Placable)scene.AddComponent(placable);
-                PlacementInfo placementInfo = GetPlacementInfo(placable);
-                brad.physics.state.position = scene.overlay.worldPos - placementInfo.offset;
-                brad.Init();
-            }
+                if (scene.inventory.GetArsenal(placable) > 0)
+                {
+                    scene.inventory.Use(placable);
+                    Placable brad = (Placable)scene.AddComponent(placable);
+                    PlacementInfo placementInfo = GetPlacementInfo(placable);
+                    brad.physics.state.position = scene.overlay.worldPos - placementInfo.offset;
+                    brad.Init();
+                }
         }
 
         protected override void SetDrawCalls2()
@@ -89,7 +85,10 @@ namespace LD60.World.Tactician.Tools
             {
                 ShaderContainer.Entry shader = scene.game.graphics.shaders.coloredNormalMap;
                 PlacementInfo placementInfo = GetPlacementInfo(placable);
-                shader.SetValue("color", new Rgba(0, 0.5f, 0, 1));
+                shader.SetValue("color", scene.inventory.GetArsenal(placable) > 0
+                    ? new Rgba(0, 0.5f, 0, 1)
+                    : new Rgba(0.5f, 0, 0, 1)
+                    );
                 scene.view.SetValues(shader, Matrix.Translation(scene.overlay.worldPos - placementInfo.offset));
                 placementInfo.nor.material.content.SetValues(shader);
                 placementInfo.nor.mesh.content.Draw(shader, pass);
