@@ -23,7 +23,9 @@ namespace LD60.World.Enemies
     public class Goblin : Component<FloatingIslands>, Instancable, Pickable
     {
         const float MAX_TURNING_RADIANS_PER_SECOND = 2.0f;
-        static readonly float GOBLIN_MOVE_FAST = 9;
+        float TARGET_SPEED => 3.5f;
+        float SPEED_KEEP_AHEAD => 1.1f;
+        float WALKING_STRENGTH => 4;
 
         public readonly Physical physics;
 
@@ -41,6 +43,7 @@ namespace LD60.World.Enemies
         {
             physics = new Physical(this);
             physics.shapes.Add(new CapsuleShape(new Vector3f(0, 0.5f, 0), new Vector3f(0, 1, 0), 0.5f));
+            physics.state.contactFriction = 0.1f;
         }
 
         protected override void Create(CreateParameters _)
@@ -140,10 +143,9 @@ namespace LD60.World.Enemies
 
             if (interesting.LengthSq() < float.PositiveInfinity)
             {
-                Vector2f fast = Vector2f.Normalize(interesting.xz - physics.state.position.xz) * GOBLIN_MOVE_FAST;
-                float KEEP_AHEAD = 1.1f;
-                Vector2f delta = fast * KEEP_AHEAD - physics.state.velocity.xz;
-                physics.state.ApplyForce(new Vector3f(delta.x, 0, delta.y), physics.state.position, ftime);
+                Vector2f fast = Vector2f.Normalize(interesting.xz - physics.state.position.xz) * TARGET_SPEED;
+                Vector2f delta = fast * SPEED_KEEP_AHEAD - physics.state.velocity.xz;
+                physics.state.ApplyForce(new Vector3f(delta.x, 0, delta.y) * WALKING_STRENGTH, physics.state.position, ftime);
             }
 
             if ((physics.state.position - scene.hostility.goal).LengthSq() < 1)

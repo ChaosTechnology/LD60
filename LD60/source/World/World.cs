@@ -30,8 +30,8 @@ namespace LD60.World
             shader = scene.game.shaders.Load("shaders/picking_island.fx", this);
 
             physics = new(this, true);
-            scene.physics.Add(physics);
             physics.isStatic = true;
+            physics.state.contactFriction = 1.0f;
             physics.shapes.Clear();
             scene.physics.Add(physics);
 
