@@ -66,6 +66,7 @@ namespace LD60.World.Tactician.Tools
                 Placable brad = (Placable)scene.AddComponent(placable);
                 PlacementInfo placementInfo = GetPlacementInfo(placable);
                 brad.physics.state.position = scene.overlay.worldPos - placementInfo.offset;
+                brad.Init();
             }
         }
 

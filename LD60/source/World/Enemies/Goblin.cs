@@ -1,4 +1,3 @@
-using System.Drawing;
 using System.Linq;
 using ChaosFramework.Components;
 using ChaosFramework.Graphics.OpenGl.AssetContainers;
@@ -14,6 +13,7 @@ using LD60.Menu;
 using static ChaosFramework.Math.Clamping;
 using static ChaosFramework.Math.Constants;
 using static ChaosFramework.Math.Trigonometry;
+using static ChaosFramework.Math.Exponentials;
 
 namespace LD60.World.Enemies
 {
@@ -27,7 +27,7 @@ namespace LD60.World.Enemies
         float scale = 1.0f;
         float determination = 1.0f;
 
-        float TARGET_SPEED => 3.5f * determination;
+        float TARGET_SPEED => 2.5f * determination;
         float SPEED_KEEP_AHEAD => 1.1f;
         float WALKING_STRENGTH => 4 * physics.state.mass;
 
@@ -58,8 +58,9 @@ namespace LD60.World.Enemies
             scene.instancers[typeof(Goblin)].instancedThings.Add(this);
             scene.overlay.Register(this);
 
+            float ostern = EaseIn(scene.phase.wave * 0.3f);
             determination = Random.instance.Rnd(1.0f, 1.5f);
-            scale = Random.instance.Rnd(1.5f, 4.0f);
+            scale = Random.instance.Rnd(1.5f, 1 + ostern * ostern * 3.0f);
             physics.state.mass = 40.0f * scale;
         }
 

@@ -11,8 +11,8 @@ namespace LD60.World.Tactician.Placables
         public Rock()
             : base()
         {
-            physics.state.mass = 100;
-            physics.state.contactFriction = 0.8f;
+            physics.state.mass = 5000;
+            physics.state.contactFriction = 0.5f;
             physics.isStatic = false;
         }
 
@@ -22,5 +22,8 @@ namespace LD60.World.Tactician.Placables
             physics.shapes.Add(scene.game.shapes.Load("models/rock/rock.gmdl", this));
             physics.shapes[0].bounce = 0;
         }
+
+        void Placable.Init()
+            => physics.state.position.y += 10;
     }
 }

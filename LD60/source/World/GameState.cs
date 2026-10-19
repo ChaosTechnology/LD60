@@ -13,6 +13,9 @@ namespace LD60.World
     public class GameState
         : Component<FloatingIslands>
     {
+        const int MIN_GOBLINS = 1;
+        const float BASE_GOBLIN_FAC = 0.5f;
+        const float RANDOM_GOBLIN_FAC = 0.33f;
         public int wave {get; private set;} = 0;
 
         public Phase phase { get; private set; }
@@ -96,9 +99,14 @@ namespace LD60.World
         void NextWave()
         {
             ++wave;
-            int numGoblins = 10 + wave * wave;
+            float somethingInBetween = wave * 0.777f + 0.5f;
+            int numExtraGoblins = MIN_GOBLINS + (int)(somethingInBetween * somethingInBetween * RANDOM_GOBLIN_FAC);
+            int numBaseGoblins = MIN_GOBLINS + (int)(somethingInBetween * BASE_GOBLIN_FAC);
             Door[] doors = scene.EnumerateChildren<Door>(true).ToArray();
-            for (int i = 0; i < numGoblins; ++i)
+            foreach (Door door in doors)
+                door.goblinPool = numBaseGoblins;
+
+            for (int i = 0; i < numExtraGoblins; ++i)
                 doors.RandomElement().goblinPool++;
         }
 
