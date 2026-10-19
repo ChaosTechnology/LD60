@@ -13,8 +13,8 @@ namespace LD60.World
         const float VIEW_HEIGHT = 20f;
         const float MOVEMENT_SPEED = 66.6f * 0.5f;
 
-        Vector3f camTarget = Vector3f.EMPTY;
-        float viewAngle = 0.3f;
+        Vector3f camTarget = new(-2.676854f, 0f, 16.290289f);
+        float viewAngle = -1.3405931f;
 
         protected override void Create(CreateParameters cparams)
         {
