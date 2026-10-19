@@ -1,0 +1,6 @@
+<Root>
+    <Text id="Death">YOU DIED</Text>
+    <Text id="TryAgain">Try Again</Text>
+    <Text id="MainMenu">Main Menu</Text>
+    <Text id="Exit">Exit</Text>
+</Root>

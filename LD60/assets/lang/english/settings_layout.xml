@@ -1,0 +1,21 @@
+<Root>
+    <SettingsPage>
+        <ScrollBox textureSource="">
+            <Layout.FlowPanel direction="ttb" align="Left">
+                <SettingsGrid
+                    FlowPanel.autoScaleMode="Stretch"
+                    fontSize="0.05"
+                    id="settingsGrid"
+                    />
+            </Layout.FlowPanel>
+        </ScrollBox>
+    </SettingsPage>
+
+    <Dialog>
+        <TabPageContainer id="tabMain">
+            <Button id="btnCancel" size="0.05" text="n"/>
+            <Button id="btnApply"  size="0.05" text="y"/>
+            <Button id="btnReset"  size="0.10, 0.05" text="Reset"/>
+        </TabPageContainer>
+    </Dialog>
+</Root>

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Build and run ChaosTemplates.Game3D and restore/build all required dependencies.
+# Build and run LD60 and restore/build all required dependencies.
 
 set -euo pipefail
 
@@ -13,8 +13,8 @@ case "$(uname -s | tr '[:upper:]' '[:lower:]')" in
 esac
 
 bash ./build.sh
-SolutionDir="$SolutionDir" bash -c '       \
-  dotnet run "./ChaosTemplates.Game3D.sln" \
-  --project "./ChaosTemplates.Game3D/"     \
-  --framework "'"$tf"'"                    \
+SolutionDir="$SolutionDir" bash -c ' \
+  dotnet run "./LD60.sln"            \
+  --project "./LD60/"                \
+  --framework "'"$tf"'"              \
   --configuration Release'
