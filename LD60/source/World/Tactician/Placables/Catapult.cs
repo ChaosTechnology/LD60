@@ -1,8 +1,12 @@
+using System.Linq;
+using ChaosFramework.Collections;
 using ChaosFramework.Components;
 using ChaosFramework.Graphics.OpenGl.Instancing;
 using ChaosFramework.Graphics.OpenGl.Model;
+using ChaosFramework.Math;
 using ChaosFramework.Math.Vectors;
 using ChaosFramework.Shapes.Rigging;
+using LD60.World.Enemies;
 
 namespace LD60.World.Tactician.Placables
 {
@@ -12,6 +16,8 @@ namespace LD60.World.Tactician.Placables
         : AnimatedPlacable
     {
         float shootProgress;
+        float cooldownTimer = 1;
+        float cooldown = 3;
 
         public Catapult()
             : base()
@@ -35,6 +41,43 @@ namespace LD60.World.Tactician.Placables
                 physics.state.GetTransform(),
                 new Vector4f(((Pickable)this).pickingIndex, scene.overlay.picked == this ? 1 : 0, 0, 0)
                 );
+        }
+
+        public override void SetUpdateCalls()
+        {
+            base.SetUpdateCalls();
+            scene.updateLayers[(int)UpdateLayers.Move].Add(UpdateState);
+        }
+
+        void UpdateState()
+        {
+            if (scene.phase.phase == Phase.Horde)
+            {
+                if ((cooldownTimer -= ftime) < 0)
+                {
+                    Goblin[] candidates = scene.EnumerateChildren<Goblin>(true).ToArray();
+                    if (candidates.Length > 0)
+                    {
+                        cooldownTimer = cooldown;
+                        Vector3f launchPoint = physics.state.position + new Vector3f(0, 3, 0);
+                        Goblin target = candidates.MinBy(x => (x.physics.state.position - launchPoint).LengthSq());
+                        float estimatedTravelTime = (target.physics.state.position - launchPoint).Length() / 10.0f;
+                        Vector3f estimatedTargetPosition = target.physics.state.position + target.physics.state.velocity * estimatedTravelTime;
+                        Vector3f launchVelocity = ChaosFramework.Physics.ProjectileLaunchCalculator.GetLaunchVelocity(
+                            estimatedTargetPosition - launchPoint,
+                            10,
+                            new(0, WorldScene.GRAVITY, 0),
+                            ChaosFramework.Physics.ProjectileLaunchCalculator.AimMode.LowestSpeed
+                            );
+                        Rock rock = scene.AddComponent<Rock>();
+                        rock.physics.Teleport(launchPoint);
+                        rock.physics.state.velocity = launchVelocity;
+                        rock.physics.state.contactFriction = 0.2f;
+                        rock.physics.state.mass = 100;
+                        rock.physics.state.baseTransform = Matrix.Scaling(0.5f);
+                    }
+                }
+            }
         }
 
         protected override void UpdateAnimation()
