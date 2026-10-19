@@ -12,7 +12,6 @@ using ChaosUtil.Primitives;
 using LD60.Menu;
 using static ChaosFramework.Math.Clamping;
 using static ChaosFramework.Math.Constants;
-using static ChaosFramework.Math.Exponentials;
 using static ChaosFramework.Math.Trigonometry;
 
 namespace LD60.World.Enemies
