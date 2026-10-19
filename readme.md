@@ -4,7 +4,7 @@ Submission for [Ludum Dare 60](https://ldjam.com/events/ludum-dare/60).
 
 ## Building and running
 
-Supported platforms are Windows and Linux (experimental).  
+Supported platforms are Windows and Linux (experimental).
 Windows builds are available on the [releases page](https://github.com/ChaosTechnology/LD60/releases/).
 
 Requirements:
@@ -19,6 +19,6 @@ Requirements:
 Then run the folliwing in a bash (git bash for Windows supported):
 
 ```
-git clone --recurse-submodules git@github.com:ChaosTechnology/LD60
+git clone --recurse-submodules https://github.com/ChaosTechnology/LD60.git
 bash ./LD60/run.sh
 ```
