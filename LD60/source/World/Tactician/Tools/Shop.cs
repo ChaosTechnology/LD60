@@ -23,6 +23,7 @@ namespace LD60.World.Tactician.Tools
 
                 scene.inventory.gold -= info.attribute.gold;
                 scene.inventory.AddStock(placable, 1);
+                scene.EnumerateChildren<Place>(true).Single().placable = info.type;
             }
 
             btn.enabledFunction = Enabled;

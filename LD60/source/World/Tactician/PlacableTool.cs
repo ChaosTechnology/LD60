@@ -16,7 +16,7 @@ namespace LD60.World.Tactician
         static bool NotAbstract(Type t)
             => !t.IsAbstract;
 
-        public override sealed void Select()
+        public override void Select()
         {
             base.Select();
             CreatePlacableButtons();
