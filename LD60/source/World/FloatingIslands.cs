@@ -28,11 +28,11 @@ namespace LD60.World
         {
             sun = new(
                 deferredShader,
-                new Vector3f(0.5f, -1, 1),
-                new Rgba(0.9f, 0.9f, 0.9f, 1) * Confix.instance.brightness
+                new Vector3f(-0.5f, -2.0f, -1.0f),
+                new Rgba(1.2f, 1.0f, 0.9f, 1) * Confix.instance.brightness
                 )
             {
-                ambient = new Rgba(0.1f, 0.1f, 0.1f, 1) * Confix.instance.brightness
+                ambient = new Rgba(0.3f, 0.3f, 0.3f, 1) * Confix.instance.brightness
             };
 
             lights.Add(sun);
