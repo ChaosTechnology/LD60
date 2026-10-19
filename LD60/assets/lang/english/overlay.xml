@@ -4,6 +4,11 @@
             <Row index="0" height="0.0666*"/>
             <Row index="2" height="0.0666*"/>
 
+            <Layout.FlowPanel id="Gold" Grid.index="0,0" direction="ltr" align="Top">
+                <Image textureSource="models/coin/menu.png" size="0.05"/>
+                <Label id="Coins" size="0.0666"/>
+            </Layout.FlowPanel>
+
             <Layout.FlowPanel id="Tools" Grid.index="0,1" direction="btt" align="Left">
             </Layout.FlowPanel>
 

@@ -16,6 +16,8 @@ using ChaosFramework.Platform;
 using ChaosFramework.Shapes;
 using ChaosFramework.Sound;
 using ChaosFramework.Sound.OpenAL;
+using ChaosUtil.Reflection;
+using LD60.World.Tactician;
 using OpenTK.Graphics.OpenGL;
 
 namespace LD60
@@ -123,7 +125,12 @@ namespace LD60
                     .ContinueWith(_ => meshes.Load(SPRITE, this)),
                 (animations = new AnimationContainer(archive, monitoring)).LoadAllAsync(@"^.*\.anim$", this),
                 (samples = new SoundDataContainer(archive, monitoring)).LoadAllAsync(@"^.*\.(wav|ogg)$", this),
-                (shapes = new ShapeContainer(archive)).LoadAllAsync(@"^.*\.obj$", this),
+                (shapes = new ShapeContainer(archive)).LoadAllAsync(@"^.*\.obj$", this)
+                    .ContinueWith(_ =>
+                    {
+                        foreach(TypeWithAttribute<PlacableAttribute> placable in PlacableTool.placables)
+                            shapes.Load(placable.attribute.mesh, this);
+                    }),
                 (fonts = new FontContainer(archive, graphics, monitoring)).LoadAllAsync(@"^fonts/.*\.chf2$", this),
                 Task.Run(() => language = new LanguagePack(archive, "english", "english")),
                 LoadShaders()

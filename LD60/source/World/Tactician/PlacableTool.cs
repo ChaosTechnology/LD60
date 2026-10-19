@@ -11,7 +11,7 @@ namespace LD60.World.Tactician
     public abstract class PlacableTool
         : Tool
     {
-        protected static readonly ImmutableArray<PlacableMeta> placables = PlacableMeta.GetTypes(typeof(Placable));
+        public static readonly ImmutableArray<PlacableMeta> placables = PlacableMeta.GetTypes(typeof(Placable));
 
         static bool NotAbstract(Type t)
             => !t.IsAbstract;

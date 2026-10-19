@@ -10,11 +10,11 @@ using ChaosFramework.Shapes.Convex;
 using ChaosFramework.Shapes.Rigging;
 using ChaosUtil.Primitives;
 using LD60.Menu;
+using LD60.World.Tactician.Placables;
 using static ChaosFramework.Math.Clamping;
 using static ChaosFramework.Math.Constants;
-using static ChaosFramework.Math.Trigonometry;
 using static ChaosFramework.Math.Exponentials;
-using LD60.World.Tactician.Placables;
+using static ChaosFramework.Math.Trigonometry;
 
 namespace LD60.World.Enemies
 {
@@ -190,11 +190,22 @@ namespace LD60.World.Enemies
                         }
             }
 
-            if (physics.state.position.y < FloatingIslands.DEATH_PLANE || health < 0)
-            {
-                scene.fire.Explode(physics.state.position, 12, new(1.0f, 1.7f, 0.2f));
+            if (physics.state.position.y < FloatingIslands.DEATH_PLANE)
                 Dispose();
-            }
+            else if (health < 0)
+                Die();
+        }
+
+        void Die()
+        {
+            Dispose();
+
+            // TODO: fall over and turn into corpse
+            scene.fire.Explode(physics.state.position, 12, new(1.0f, 1.7f, 0.2f));
+
+            Coin c = scene.AddComponent<Coin>();
+            Vector3f off = c.physics.shapes[0].Support(new Vector3f(0, -1, 0));
+            c.physics.state.position = physics.state.position - new Vector3f(0, off.y, 0);
         }
 
         void Instancable.GiveMeInstances(InstancingAttribute[] instancers)
