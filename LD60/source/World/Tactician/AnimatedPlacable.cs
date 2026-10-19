@@ -12,8 +12,8 @@ namespace LD60.World.Tactician
         public override void SetUpdateCalls()
         {
             base.SetUpdateCalls();
-            scene.updateLayers[(int)UpdateLayers.UpdateParticles].Add(ClearAnimation);
-            scene.updateLayers[(int)UpdateLayers.UpdateParticles].Add(UpdateAnimation);
+            scene.updateLayers[(int)UpdateLayers.ClearAnimations].Add(ClearAnimation);
+            scene.updateLayers[(int)UpdateLayers.UpdateAnimations].Add(UpdateAnimation);
         }
 
         void ClearAnimation()
