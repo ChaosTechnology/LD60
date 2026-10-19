@@ -30,7 +30,7 @@ namespace LD60.World.Enemies
         float scale = 1.0f;
         float determination = 1.0f;
 
-        float TARGET_SPEED => 2.5f * determination;
+        float TARGET_SPEED => 2.5f * determination * 3;
         float SPEED_KEEP_AHEAD => 1.1f;
         float WALKING_STRENGTH => 4 * physics.state.mass;
 
@@ -161,9 +161,6 @@ namespace LD60.World.Enemies
                 physics.state.ApplyForce(new Vector3f(delta.x, 0, delta.y) * WALKING_STRENGTH, physics.state.position, ftime);
             }
 
-            if ((physics.state.position - scene.hostility.goal).LengthSq() < 1)
-                new Death(scene).ShowDialog(null, null);
-
             float target = (float)System.Math.Atan2(physics.state.velocity.x, physics.state.velocity.z);
             float difference = (float)System.Math.Atan2(Sin(target - facingAngle), Cos(target - facingAngle));
             float step = Clamp(-MAX_TURNING_RADIANS_PER_SECOND * ftime, MAX_TURNING_RADIANS_PER_SECOND * ftime, difference);
@@ -182,7 +179,7 @@ namespace LD60.World.Enemies
             {
                 Physical other = collision.p1.creator == this ? collision.p2 : collision.p1;
                 if (other.creator is Rock oha)
-                    foreach (var data in collision.data)
+                    foreach (CollisionData.ShapeCollisionData data in collision.data)
                         {
                             float damage = (float)System.Math.Log2((data.v1 - data.v2).Length() * other.state.mass);
                             if (damage > 1.0f)
