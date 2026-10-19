@@ -1,11 +1,10 @@
+using System.Linq;
+using ChaosFramework.Collections;
 using ChaosFramework.Components;
 using ChaosFramework.Graphics;
 using ChaosFramework.Math.Vectors;
 using ChaosFramework.Menu.OpenGl;
-using SysCol = System.Collections.Generic;
 using ChaosFramework.Menu.OpenGl.Controls;
-using System.Linq;
-using ChaosFramework.Collections;
 using LD60.World.Enemies;
 
 namespace LD60.World
