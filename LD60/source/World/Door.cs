@@ -16,6 +16,7 @@ namespace LD60.World
         : StandardPickable
     {
         const float GOBLIN_SPAWN_INTERVAL = 3.0f;
+        public int goblinPool;
 
         float goblinSpawnTimer = GOBLIN_SPAWN_INTERVAL;
 
@@ -68,12 +69,17 @@ namespace LD60.World
 
         void SpawnGoblins()
         {
-            if ((goblinSpawnTimer -= ftime) <= 0)
-            {
-                goblinSpawnTimer += GOBLIN_SPAWN_INTERVAL;
-                Enemies.Goblin john = scene.AddComponent<Enemies.Goblin>();
-                john.physics.state.position = physics.state.position;
-            }
+            if (scene.phase.phase == Phase.Horde)
+                if ((goblinSpawnTimer -= ftime) <= 0)
+                {
+                    goblinSpawnTimer += GOBLIN_SPAWN_INTERVAL;
+                    if (goblinPool > 0)
+                    {
+                        goblinPool--;
+                        Enemies.Goblin john = scene.AddComponent<Enemies.Goblin>();
+                        john.physics.state.position = physics.state.position;
+                    }
+                }
         }
     }
 }

@@ -2,13 +2,19 @@ using ChaosFramework.Components;
 using ChaosFramework.Graphics;
 using ChaosFramework.Math.Vectors;
 using ChaosFramework.Menu.OpenGl;
+using SysCol = System.Collections.Generic;
 using ChaosFramework.Menu.OpenGl.Controls;
+using System.Linq;
+using ChaosFramework.Collections;
+using LD60.World.Enemies;
 
 namespace LD60.World
 {
     public class GameState
         : Component<FloatingIslands>
     {
+        public int wave {get; private set;} = 0;
+
         public Phase phase { get; private set; }
         float phaseTime, phaseTimer;
 
@@ -31,7 +37,7 @@ namespace LD60.World
         {
             base.SetUpdateCalls();
             scene.updateLayers[(int)UpdateLayers.SetCamera].Add(UpdatePhaseLabel);
-            scene.updateLayers[(int)UpdateLayers.SetCamera].Add(UpdatePhase);
+            scene.updateLayers[(int)UpdateLayers.ChangePhase].Add(UpdatePhase);
         }
 
         void UpdatePhaseLabel()
@@ -40,7 +46,25 @@ namespace LD60.World
         void UpdatePhase()
         {
             if ((phaseTimer -= ftime) < 0)
+            {
                 SwitchState();
+                return;
+            }
+
+            if (phase == Phase.Horde)
+                RateGoblinSlayer();
+        }
+
+        void RateGoblinSlayer()
+        {
+            foreach(Door d in scene.EnumerateChildren<Door>(true))
+                if (d.goblinPool > 0)
+                    return;
+
+            foreach(Goblin d in scene.EnumerateChildren<Goblin>(true))
+                return;
+
+            SwitchState();
         }
 
         void SwitchState()
@@ -69,6 +93,15 @@ namespace LD60.World
             }
         }
 
+        void NextWave()
+        {
+            ++wave;
+            int numGoblins = 10 + wave * wave;
+            Door[] doors = scene.EnumerateChildren<Door>(true).ToArray();
+            for (int i = 0; i < numGoblins; ++i)
+                doors.RandomElement().goblinPool++;
+        }
+
         void EnterPhase(Phase phase, float phaseTime)
         {
             this.phase = phase;
@@ -77,6 +110,7 @@ namespace LD60.World
 
         void BeginStrategize()
         {
+            NextWave();
             EnterPhase(Phase.Strategize, float.NaN);
 
             Vector2f pos = new Vector2f(scene.view.screenRatio, -1) * 0.9f;
