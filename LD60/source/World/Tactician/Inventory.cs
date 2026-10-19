@@ -30,7 +30,7 @@ namespace LD60.World.Tactician
                 ? throw new ArgumentException($"{nameof(t)} must be {nameof(Placable)}", nameof(t))
                 : AddStockInternal(t, count);
 
-        public int AddStockInternal(Type t, int count)
+        int AddStockInternal(Type t, int count)
         {
             if (count <= 0)
                 throw new ArgumentException($"Can't add negative amounts!", nameof(count));

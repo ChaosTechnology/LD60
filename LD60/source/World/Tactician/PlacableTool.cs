@@ -19,21 +19,21 @@ namespace LD60.World.Tactician
         public override sealed void Select()
         {
             base.Select();
-            CreatePlacableButtons(ModifyPlacableButton);
+            CreatePlacableButtons();
         }
 
-        protected abstract void ModifyPlacableButton(Button btn, Type placable);
-
-        protected void CreatePlacableButtons(Action<Button, Type> modifyButton)
+        protected void CreatePlacableButtons()
         {
             scene.overlay.subTools.CreateControl<Image>(0, 0.05f).textureSource = string.Empty;
             foreach(Type placable in AssemblyManager.SubTypesOf<Placable>().Where(NotAbstract))
             {
                 Button btn = scene.overlay.subTools.CreateControl<Button>(0, 0.05f, placable.Name);
-                modifyButton?.Invoke(btn, placable);
+                ModifyPlacableButton(btn, placable);
             }
             scene.overlay.panel.Layout();
         }
+
+        protected abstract void ModifyPlacableButton(Button btn, Type placable);
 
     }
 }
