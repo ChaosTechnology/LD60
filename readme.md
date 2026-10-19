@@ -4,7 +4,8 @@ Submission for [Ludum Dare 60](https://ldjam.com/events/ludum-dare/60).
 
 ## Building and running
 
-Supported platforms are Windows and Linux (experimental).
+Supported platforms are Windows and Linux (experimental).  
+Windows builds are available on the [releases page](https://github.com/ChaosTechnology/LD60/releases/).
 
 Requirements:
 - [dotnet 8.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) or higher
