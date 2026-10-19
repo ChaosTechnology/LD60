@@ -18,12 +18,13 @@ void fs_sample(
     out vec4 outColor : COLOR0
 ) {
     vec4 c = color + (HIGHLIGH_COLOR / 2.0 - color) * info.z * 0.5;
+    float cool = inTex.y > info.y ? 1 : 0.3;
 
     outColor = textureLod(tex, inTex, 0.0) * c;
+    outColor.rgb *= cool;
     outColor += (HIGHLIGH_COLOR - outColor)
               * info.z
               * ramp(2 * max(abs(0.5 - inTex.x), abs(0.5 - inTex.y)))
               * ((sin(info.x * 6) + 1) * 0.5)
               ;
-    // TODO: cooldown
 }

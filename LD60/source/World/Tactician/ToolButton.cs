@@ -10,9 +10,12 @@ namespace LD60.Tactician
     public class ToolButton
         : Button
     {
+        static ToolInfo DefaultToolInfo()
+            => (false, 0);
+
         public delegate ToolInfo GetToolInfo();
 
-        public GetToolInfo getToolInfo = () => (false, 0);
+        public GetToolInfo getToolInfo = DefaultToolInfo;
 
         protected override void Create(CreateParameters cparams)
         {
