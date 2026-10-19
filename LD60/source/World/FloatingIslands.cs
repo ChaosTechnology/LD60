@@ -5,6 +5,7 @@ using ChaosFramework.Input;
 using ChaosFramework.Input.InputEvents;
 using ChaosFramework.Math.Vectors;
 using LD60.Input;
+using LD60.World.Enemies;
 using LD60.World.Tactician;
 
 namespace LD60.World
@@ -12,6 +13,7 @@ namespace LD60.World
     public class FloatingIslands : WorldScene
     {
         public const float DEATH_PLANE = -100;
+        public const float SCREAM_PLANE = -40;
 
         public readonly DirectionalLight sun;
 
@@ -22,6 +24,7 @@ namespace LD60.World
         public readonly Hostility hostility;
         public readonly Map map;
         public readonly GameState phase;
+        public readonly Sounds enemySounds;
 
         bool mustInsertOverlay = true;
 
@@ -36,6 +39,7 @@ namespace LD60.World
             {
                 ambient = new Rgba(0.3f, 0.3f, 0.3f, 1) * Confix.instance.brightness
             };
+            enemySounds = new(game);
 
             lights.Add(sun);
 

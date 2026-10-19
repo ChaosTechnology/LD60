@@ -6,7 +6,7 @@ namespace LD60.World.Tactician
 {
     public class Inventory
     {
-        public int gold = 100;
+        public int gold = 350;
         readonly SysCol.Dictionary<Type, int> arsenal = [];
 
         public int GetArsenal<T>()

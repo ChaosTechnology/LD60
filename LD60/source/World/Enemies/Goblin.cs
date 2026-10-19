@@ -24,16 +24,23 @@ namespace LD60.World.Enemies
     {
         const float MAX_TURNING_RADIANS_PER_SECOND = 2.0f;
 
+        static float RandomAmbientTime()
+            => Random.instance.Rnd(2.5f, 8.7f) * 4;
+
         float health = 100.0f;
 
         float scale = 1.0f;
         float determination = 1.0f;
 
-        float TARGET_SPEED => 2.5f * determination * 3;
+        float TARGET_SPEED => 2.5f * determination;
         float SPEED_KEEP_AHEAD => 1.1f;
         float WALKING_STRENGTH => 4 * physics.state.mass;
 
+
         public readonly Physical physics;
+
+        float ambientNoiseTimer = RandomAmbientTime();
+        bool screaming = false;
 
         readonly int kind = Random.instance.RndInt(3);
 
@@ -71,7 +78,17 @@ namespace LD60.World.Enemies
         {
             base.SetUpdateCalls();
             scene.updateLayers[(int)UpdateLayers.Move].Add(Move);
+            scene.updateLayers[(int)UpdateLayers.Move].Add(Groan);
             scene.updateLayers[(int)UpdateLayers.PostCollision].Add(ConsiderSuicide);
+        }
+
+        void Groan()
+        {
+            if ((ambientNoiseTimer -= ftime) < 0)
+            {
+                ambientNoiseTimer = RandomAmbientTime();
+                scene.enemySounds.Play(Sounds.Kind.GoblinAmbient);
+            }
         }
 
         void Move()
@@ -182,17 +199,25 @@ namespace LD60.World.Enemies
                         {
                             float damage = (float)System.Math.Log2((data.v1 - data.v2).Length() * other.state.mass);
                             if (damage > 1.0f)
+                            {
                                 health -= damage;
+                                scene.enemySounds.Play(Sounds.Kind.GoblinDamage);
+                            }
                         }
+            }
+            if (physics.state.position.y < FloatingIslands.SCREAM_PLANE && !screaming)
+            {
+                screaming = true;
+                scene.enemySounds.Play(Sounds.Kind.GoblinFalling);
             }
 
             if (physics.state.position.y < FloatingIslands.DEATH_PLANE)
-                Dispose();
+                Die(10);
             else if (health < 0)
-                Die();
+                Die(25);
         }
 
-        void Die()
+        void Die(int coinValue)
         {
             Dispose();
 
@@ -200,6 +225,7 @@ namespace LD60.World.Enemies
             scene.fire.Explode(physics.state.position, 12, new(1.0f, 1.7f, 0.2f));
 
             Coin c = scene.AddComponent<Coin>();
+            c.value = coinValue;
             Vector3f off = c.physics.shapes[0].Support(new Vector3f(0, -1, 0));
             c.physics.state.position = physics.state.position - new Vector3f(0, off.y, 0);
         }
