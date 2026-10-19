@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using ChaosFramework.Collections.Immutable;
+using ChaosFramework.Math.Vectors;
 using ChaosFramework.Menu.OpenGl.Controls;
 using ChaosUtil.Reflection;
 using LD60.Tactician;
@@ -26,10 +27,16 @@ namespace LD60.World.Tactician
         protected void CreatePlacableButtons()
         {
             scene.overlay.subTools.CreateControl<Image>(0, 0.05f).textureSource = string.Empty;
-            foreach(Type placable in AssemblyManager.SubTypesOf<Placable>().Where(NotAbstract))
+            foreach(Type it in AssemblyManager.SubTypesOf<Placable>().Where(NotAbstract))
             {
+                Type placable = it;
                 ToolButton btn = scene.overlay.subTools.CreateControl<ToolButton>(0, 0.05f, placable.Name);
                 ModifyPlacableButton(btn, placable);
+
+                scene.overlay.panel.Layout(); // TODO: Don't
+                Label lblAmount = btn.scene.CreateControl<Label>(btn.position + new Vector2f(btn.size.x, -btn.size.y), btn.size);
+                lblAmount.textAlign = ChaosFramework.Graphics.Align.BottomRight;
+                lblAmount.getText = _ => scene.inventory.GetArsenal(placable).ToString();
             }
             scene.overlay.panel.Layout();
         }
