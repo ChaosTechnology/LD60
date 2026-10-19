@@ -213,12 +213,12 @@ namespace LD60.World.Enemies
             }
 
             if (physics.state.position.y < FloatingIslands.DEATH_PLANE)
-                Dispose();
+                Die(10);
             else if (health < 0)
-                Die();
+                Die(25);
         }
 
-        void Die()
+        void Die(int coinValue)
         {
             Dispose();
 
@@ -226,6 +226,7 @@ namespace LD60.World.Enemies
             scene.fire.Explode(physics.state.position, 12, new(1.0f, 1.7f, 0.2f));
 
             Coin c = scene.AddComponent<Coin>();
+            c.value = coinValue;
             Vector3f off = c.physics.shapes[0].Support(new Vector3f(0, -1, 0));
             c.physics.state.position = physics.state.position - new Vector3f(0, off.y, 0);
         }

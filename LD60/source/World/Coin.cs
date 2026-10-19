@@ -14,7 +14,7 @@ namespace LD60.World
     {
         const string MODEL = "models/coin/coin.gmdl";
 
-        public const int VALUE = 10;
+        public int value = 10;
 
         bool pickedup = false;
 
@@ -47,7 +47,7 @@ namespace LD60.World
             }
             else if (scene.overlay.picked == this)
             {
-                scene.inventory.gold += VALUE;
+                scene.inventory.gold += value;
                 pickedup = true;
             }
         }
