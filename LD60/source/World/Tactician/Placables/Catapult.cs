@@ -74,7 +74,7 @@ namespace LD60.World.Tactician.Placables
                             MAX_TURNING_RADIANS_PER_SECOND * ftime
                             );
                 }
-                if (cooldownTimer < 0.2f)
+                if (cooldownTimer < 0.2f && target != null)
                     shootProgress = 0.9999f - Max(cooldownTimer / 0.2f, 0);
 
                 if (cooldownTimer < 0)
