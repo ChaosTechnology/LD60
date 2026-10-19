@@ -25,7 +25,7 @@ namespace LD60.World.Tactician.Tools
         // TODO: capture TypeWithAttribute<PlacableAttribute> here
         public Type placable = typeof(Rock);
 
-        public float coooooooldown, cooldown = 0;
+        public float cooldownTime, cooldownTimer = 0;
 
         PlacementInfo GetPlacementInfo(Type placable)
         {
@@ -53,7 +53,7 @@ namespace LD60.World.Tactician.Tools
                 => this.placable = placable;
 
             (bool, float) GetToolInfo()
-                => (this.placable == placable, cooldown / coooooooldown);
+                => (this.placable == placable, cooldownTimer / cooldownTime);
 
             btn.getToolInfo = GetToolInfo;
             btn.enabledFunction = Enabled;
@@ -78,7 +78,7 @@ namespace LD60.World.Tactician.Tools
         public override void Activate()
         {
             if (placable != null
-                && cooldown <= 0
+                && cooldownTimer <= 0
                 && scene.overlay.picked is Map.Segment
                 && scene.inventory.GetArsenal(placable) > 0
                 )
@@ -89,7 +89,8 @@ namespace LD60.World.Tactician.Tools
                 brad.physics.state.position = scene.overlay.worldPos - placementInfo.offset;
                 brad.Init();
 
-                coooooooldown = cooldown = placables.Single(t => t.type == placable).attribute.cooldown;
+                if (scene.phase.phase != Phase.Strategize)
+                    cooldownTime = cooldownTimer = placables.Single(t => t.type == placable).attribute.cooldown;
             }
         }
 
@@ -100,7 +101,7 @@ namespace LD60.World.Tactician.Tools
         }
 
         void DecrementCooldown()
-            => cooldown -= ftime;
+            => cooldownTimer -= ftime;
 
         protected override void SetDrawCalls2()
         {
