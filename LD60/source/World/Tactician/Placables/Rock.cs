@@ -13,6 +13,7 @@ namespace LD60.World.Tactician.Placables
         {
             physics.state.mass = 100;
             physics.state.contactFriction = 0.8f;
+            physics.isStatic = false;
         }
 
         protected override void Create(CreateParameters cparams)
