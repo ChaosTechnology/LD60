@@ -61,9 +61,10 @@ namespace LD60.World.Enemies
             scene.instancers[typeof(Goblin)].instancedThings.Add(this);
             scene.overlay.Register(this);
 
-            float ostern = EaseIn(scene.phase.wave * 0.3f);
-            determination = Random.instance.Rnd(1.0f, 1.5f);
-            scale = Random.instance.Rnd(1.5f, 1 + ostern * ostern * 3.0f);
+            float scaleBase = EaseIn(scene.phase.wave * 0.3f);
+            float speedBase = 0.5f + scene.phase.wave * 0.2f;
+            determination = Random.instance.Rnd(speedBase, speedBase * 1.5f);
+            scale = Random.instance.Rnd(1.5f, 1 + scaleBase * scaleBase * 3.0f);
             physics.state.mass = 40.0f * scale;
         }
 
