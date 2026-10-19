@@ -12,8 +12,8 @@ namespace LD60.World
 {
     public class FloatingIslands : WorldScene
     {
-        public const float DEATH_PLANE = -100;
-        public const float SCREAM_PLANE = -40;
+        public const float DEATH_PLANE = -200;
+        public const float SCREAM_PLANE = -20;
 
         public readonly DirectionalLight sun;
 

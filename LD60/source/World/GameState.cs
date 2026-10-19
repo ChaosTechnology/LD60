@@ -69,7 +69,8 @@ namespace LD60.World
                     return;
 
             foreach(Goblin d in scene.EnumerateChildren<Goblin>(true))
-                return;
+                if (d.physics.state.position.y > FloatingIslands.SCREAM_PLANE)
+                    return;
 
             SwitchState();
         }
