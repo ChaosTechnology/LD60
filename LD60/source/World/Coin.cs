@@ -32,6 +32,12 @@ namespace LD60.World
             scene.updateLayers[(int)UpdateLayers.Move].Add(Turn);
         }
 
+        public void Collect()
+        {
+            scene.inventory.gold += value;
+            pickedup = true;
+        }
+
         void Turn()
         {
             r += ftime;
@@ -46,10 +52,7 @@ namespace LD60.World
                     Dispose();
             }
             else if (scene.overlay.picked == this)
-            {
-                scene.inventory.gold += value;
-                pickedup = true;
-            }
+                Collect();
         }
     }
 }

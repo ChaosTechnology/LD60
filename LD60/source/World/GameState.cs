@@ -28,7 +28,7 @@ namespace LD60.World
 
         protected override void Create(CreateParameters cparams)
         {
-            EnterPhase(Phase.Startup, 3);
+            EnterPhase(Phase.Startup, 1);
 #if DEBUG
             phaseLabel = scene.overlay.panel.CreateControl<Label>(new Vector2f(-scene.view.screenRatio, 0.8f), 0.05f, phase.ToString());
             phaseLabel.textAlign = Align.TopLeft;
@@ -69,7 +69,8 @@ namespace LD60.World
                     return;
 
             foreach(Goblin d in scene.EnumerateChildren<Goblin>(true))
-                return;
+                if (d.physics.state.position.y > FloatingIslands.SCREAM_PLANE)
+                    return;
 
             SwitchState();
         }
