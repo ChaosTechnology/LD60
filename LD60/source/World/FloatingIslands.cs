@@ -52,7 +52,6 @@ namespace LD60.World
 
             AddComponent<World>();
             AddComponent<Skybox>();
-            AddComponent<CameraController>();
 
             pause = new Menu.PauseMenu(this)
             {

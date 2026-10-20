@@ -6,8 +6,8 @@ using ChaosFramework.Math;
 using ChaosFramework.Math.Vectors;
 using ChaosFramework.Shapes.Rigging;
 using LD60.World.Enemies;
-using static ChaosFramework.Math.Exponentials;
 using static ChaosFramework.Math.Clamping;
+using static ChaosFramework.Math.Exponentials;
 
 namespace LD60.World.Tactician.Placables
 {
@@ -87,11 +87,13 @@ namespace LD60.World.Tactician.Placables
                     {
                         float estimatedTravelTime = (target.physics.state.position - launchPoint).Length() / 60.0f;
                         Vector3f estimatedTargetPosition = target.physics.state.position + target.physics.state.velocity * estimatedTravelTime;
-                        Vector3f launchVelocity = ChaosFramework.Physics.ProjectileLaunchCalculator.GetLaunchVelocity(
+                        Vector3f launchVelocity;
+                        ChaosFramework.Physics.ProjectileLaunchCalculator.GetLaunchVelocity(
                             estimatedTargetPosition - launchPoint,
                             100,
                             new(0, WorldScene.GRAVITY, 0),
-                            ChaosFramework.Physics.ProjectileLaunchCalculator.AimMode.MinTime
+                            ChaosFramework.Physics.ProjectileLaunchCalculator.AimMode.MinTime,
+                            out launchVelocity
                             );
                         Rock rock = scene.AddComponent<Rock>();
                         rock.physics.Teleport(launchPoint);

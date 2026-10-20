@@ -43,7 +43,7 @@ namespace LD60
 
             Confix.Load();
 
-            string title = "LD60";
+            string title = "LD60 - Goblin Island";
 
             GlfwPlatformContext platformContext = new();
             PresentationContext window = platformContext.CreateFullscreen(title, platformContext.PrimaryMonitor);

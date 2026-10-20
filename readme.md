@@ -5,7 +5,7 @@ Submission for [Ludum Dare 60](https://ldjam.com/events/ludum-dare/60).
 Do you like beer?  
 Too bad, 'cause so do goblins.
 
-Protect your holy jar from hordes of over-sobered goblins!  
+Protect your holy beer stein from hordes of over-sobered goblins!  
 Once a goblin touches your precious beer, it's tainted and you'll die.  
 Make sure they NEVER reach it!
 
@@ -19,7 +19,7 @@ They are aligned vertically at the bottom left of your screen.
 
 #### Shop
 Here you can purchase weapons for placing when using the `Place` tool.  
-The weapons available for purchase will appear horizontally at the bootom left of your screen.
+The weapons available for purchase will appear horizontally at the bottom left of your screen.
 You'll need to expend gold to purchase weapons.
 Your current amount of gold is displayed in the topleft of the screen.
 The purchased stock for each weapon is displayed in the bottom right of its tool button.

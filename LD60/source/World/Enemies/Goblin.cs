@@ -10,10 +10,8 @@ using ChaosFramework.Shapes.Convex;
 using ChaosFramework.Shapes.Rigging;
 using ChaosUtil.Primitives;
 using LD60.World.Tactician.Placables;
-using static ChaosFramework.Math.Clamping;
 using static ChaosFramework.Math.Constants;
 using static ChaosFramework.Math.Exponentials;
-using static ChaosFramework.Math.Trigonometry;
 
 namespace LD60.World.Enemies
 {

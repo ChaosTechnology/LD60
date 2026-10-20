@@ -3,7 +3,7 @@
 
   <!-- Project Metadata -->
   <PropertyGroup>
-    <AssemblyName>LD60</AssemblyName>
+    <AssemblyName>LD60 - Goblin Island</AssemblyName>
     <RootNamespace>LD60</RootNamespace>
     <ProjectGuid>{E2577D53-E15F-4DDE-B1C7-86C6398F8882}</ProjectGuid>
     <ApplicationIcon>Resources/icon.ico</ApplicationIcon>
