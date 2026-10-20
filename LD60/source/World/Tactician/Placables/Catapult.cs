@@ -84,11 +84,13 @@ namespace LD60.World.Tactician.Placables
                     {
                         float estimatedTravelTime = (target.physics.state.position - launchPoint).Length() / 10.0f;
                         Vector3f estimatedTargetPosition = target.physics.state.position + target.physics.state.velocity * estimatedTravelTime;
-                        Vector3f launchVelocity = ChaosFramework.Physics.ProjectileLaunchCalculator.GetLaunchVelocity(
+                        Vector3f launchVelocity;
+                        ChaosFramework.Physics.ProjectileLaunchCalculator.GetLaunchVelocity(
                             estimatedTargetPosition - launchPoint,
                             10,
                             new(0, WorldScene.GRAVITY, 0),
-                            ChaosFramework.Physics.ProjectileLaunchCalculator.AimMode.LowestSpeed
+                            ChaosFramework.Physics.ProjectileLaunchCalculator.AimMode.LowestSpeed,
+                            out launchVelocity
                             );
                         Rock rock = scene.AddComponent<Rock>();
                         rock.physics.Teleport(launchPoint);
