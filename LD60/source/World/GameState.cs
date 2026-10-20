@@ -23,7 +23,8 @@ namespace LD60.World
         const int MIN_GOBLINS = 1;
         const float BASE_GOBLIN_FAC = 0.5f;
         const float RANDOM_GOBLIN_FAC = 0.33f;
-        static readonly Vector3f START_CAM_TARGET = new(-10, 50, 30);
+        static readonly Vector3f START_CAM_TARGET = new(-38.0176f, 0, -28.382034f);
+        const float START_VIEW_ANGLE = -2.2763548f;
 
         static readonly LayoutInfo LAYOUT = new(Align.Center, false, true);
 
@@ -93,7 +94,8 @@ namespace LD60.World
 
             if (phase == Phase.Startup)
             {
-                float viewAngle = (1 - percentageLeft) * CameraController.START_VIEW_ANGLE;
+                float viewAngle = CameraController.START_VIEW_ANGLE
+                                + (START_VIEW_ANGLE - CameraController.START_VIEW_ANGLE) * percentageLeft;
                 float sin = Sin(viewAngle);
                 float cos = Cos(viewAngle);
 
