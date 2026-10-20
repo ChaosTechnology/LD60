@@ -66,7 +66,7 @@ Requirements:
   sudo apt install libopenal-dev
   ```
 
-Then run the folliwing in a bash (git bash for Windows supported):
+Then run the following in a bash (git bash for Windows supported):
 
 ```
 git clone --recurse-submodules https://github.com/ChaosTechnology/LD60-GoblinIsland.git
