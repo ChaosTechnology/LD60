@@ -9,12 +9,16 @@ namespace LD60.World
     [Instancing.DefaultInstancer(1, "models/cube.gmdl", null)]
     public class CameraController : Component<FloatingIslands>
     {
-        const float VIEW_DISTANCE = 30.0f;
-        const float VIEW_HEIGHT = 20f;
+        public const float VIEW_DISTANCE = 30.0f;
+        public const float VIEW_HEIGHT = 20f;
+        public const float START_VIEW_ANGLE = -1.3405931f;
         const float MOVEMENT_SPEED = 66.6f * 0.5f;
 
-        Vector3f camTarget = new(-2.676854f, 0f, 16.290289f);
-        float viewAngle = -1.3405931f;
+        public static readonly Vector3f START_CAM_TARGET = new(-2.676854f, 0f, 16.290289f);
+
+
+        Vector3f camTarget = START_CAM_TARGET;
+        float viewAngle = START_VIEW_ANGLE;
 
         protected override void Create(CreateParameters cparams)
         {

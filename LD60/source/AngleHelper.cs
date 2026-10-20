@@ -1,6 +1,6 @@
 using ChaosFramework.Math.Vectors;
-using static ChaosFramework.Math.Trigonometry;
 using static ChaosFramework.Math.Clamping;
+using static ChaosFramework.Math.Trigonometry;
 
 public static class AngleHelper
 {

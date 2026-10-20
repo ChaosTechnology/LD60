@@ -1,9 +1,9 @@
-using ChaosUtil.Primitives;
+using System.Linq;
 using System.Text.RegularExpressions;
 using ChaosFramework.Collections;
 using ChaosFramework.IO.Streams;
 using ChaosFramework.Sound.OpenAL;
-using System.Linq;
+using ChaosUtil.Primitives;
 
 namespace LD60.World.Enemies
 {

@@ -2,7 +2,10 @@ namespace LD60.World
 {
     public enum Phase
     {
-        /// <summary> TODO: When starting the game, initially do a camera drive or something. </summary>
+        /// <summary> Not entered any phase yet. </summary>
+        None,
+
+        /// <summary> Camera drive on game start. </summary>
         Startup,
 
         /// <summary> Freely purchase or place units without a time limit. </summary>

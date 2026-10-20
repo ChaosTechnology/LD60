@@ -6,8 +6,8 @@ using ChaosFramework.Math;
 using ChaosFramework.Math.Vectors;
 using ChaosFramework.Shapes.Rigging;
 using LD60.World.Enemies;
-using static ChaosFramework.Math.Exponentials;
 using static ChaosFramework.Math.Clamping;
+using static ChaosFramework.Math.Exponentials;
 
 namespace LD60.World.Tactician.Placables
 {
