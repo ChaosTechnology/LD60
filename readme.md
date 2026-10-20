@@ -2,9 +2,14 @@
 
 Submission for [Ludum Dare 60](https://ldjam.com/events/ludum-dare/60).
 
-## How To Play
+Do you like beer?  
+Too bad, 'cause so do goblins.
 
-Protect your holy beer from hordes of over-sobered goblins!
+Protect your holy jar from hordes of over-sobered goblins!  
+Once a goblin touches your precious beer, it's tainted and you'll die.  
+Make sure they NEVER reach it!
+
+## How To Play
 
 You'll essentially cycle through 2 phases.
 
