@@ -55,7 +55,7 @@ While this may seem easier it only yields 10 coins per goblin.
 
 Supported platforms are Windows and Linux (experimental).
 
-Windows builds are available on the [releases page](https://github.com/ChaosTechnology/LD60/releases/).
+Windows builds are available on the [releases page](https://github.com/ChaosTechnology/LD60-GoblinIsland/releases/).
 
 Requirements:
 - [dotnet 8.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) or higher
@@ -69,6 +69,6 @@ Requirements:
 Then run the folliwing in a bash (git bash for Windows supported):
 
 ```
-git clone --recurse-submodules https://github.com/ChaosTechnology/LD60.git
+git clone --recurse-submodules https://github.com/ChaosTechnology/LD60-GoblinIsland.git
 bash ./LD60/run.sh
 ```
