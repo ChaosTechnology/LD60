@@ -40,6 +40,6 @@ namespace LD60.World
         }
 
         void Lose()
-            => new Death(scene).ShowDialog(null, null);
+            => new Death(islands).ShowDialog(null, null);
     }
 }

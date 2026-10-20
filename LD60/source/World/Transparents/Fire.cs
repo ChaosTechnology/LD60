@@ -18,7 +18,7 @@ namespace LD60.World.Transparents
                 ((Game)scene.game).shaders.Load("shaders/fire.fx", this),
                 ((Game)scene.game).textures.Load("textures/particles/fire.png", this),
                 1,
-                ((WorldScene)scene).view,
+                ((DeferredRenderingScene)scene).view,
                 MAX_PARTICLES,
                 (int)UpdateLayers.UpdateParticles, new string[] { "PARTICLE_TEXOFFSET", "PARTICLE_COLOR" }
                 ));

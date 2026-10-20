@@ -6,11 +6,13 @@ using ChaosFramework.Physics;
 namespace LD60.World
 {
     public abstract class StandardPickable
-        : Component<FloatingIslands>
+        : Component<DeferredRenderingScene>
         , Pickable
         , Instancable
     {
         readonly Physical _physics;
+
+        protected FloatingIslands islands => scene as FloatingIslands;
 
         int Pickable.pickingIndex { get; set; }
         public Physical physics => _physics;
@@ -25,8 +27,8 @@ namespace LD60.World
 
         protected override void Create(CreateParameters cparams)
         {
-            scene.physics.Add(physics);
-            scene.overlay.Register(this);
+            islands?.physics.Add(physics);
+            islands?.overlay.Register(this);
             scene.instancers[GetType()].instancedThings.Add(this);
         }
 
@@ -37,17 +39,17 @@ namespace LD60.World
             scene.updateLayers[(int)UpdateLayers.PostCollision].Add(ConsiderSuicide);
         }
 
-        void Move()
+        protected virtual void Move()
             => physics.state.Move(ftime);
 
-        void ConsiderSuicide()
+        protected virtual void ConsiderSuicide()
         {
             if (physics.state.position.y < FloatingIslands.DEATH_PLANE)
                 Dispose();
         }
 
         protected Vector4f GetPickingRegister()
-            => new(((Pickable)this).pickingIndex, scene.overlay.picked == this ? 1 : 0, 0, 0);
+            => new(((Pickable)this).pickingIndex, islands?.overlay.picked == this ? 1 : 0, 0, 0);
 
         public virtual void GiveMeInstances(InstancingAttribute[] instancers)
             => instancers[0].informer.AddInstance(physics.state.GetTransform(), GetPickingRegister());
@@ -58,8 +60,8 @@ namespace LD60.World
         protected override void DoDispose()
         {
             base.DoDispose();
-            scene.physics.Remove(physics);
-            scene.overlay.Unregister(this);
+            islands?.physics.Remove(physics);
+            islands?.overlay.Unregister(this);
             scene.instancers[GetType()].instancedThings.Remove(this);
         }
     }

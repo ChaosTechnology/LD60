@@ -39,7 +39,7 @@ namespace LD60.World
             animInstancer.AddInstance(
                 rig.GetBoneTransforms(animInstancer.animesh),
                 physics.state.GetTransform(),
-                new Vector4f(((Pickable)this).pickingIndex, scene.overlay.picked == this ? 1 : 0, 0, 0)
+                GetPickingRegister()
                 );
 
             if (open > 0)
@@ -55,11 +55,11 @@ namespace LD60.World
 
         void UpdateAnimation()
         {
-            open = scene.phase.phase switch
+            open = islands.phase.phase switch
             {
-                Phase.Countdown => 1 - scene.phase.percentageLeft,
+                Phase.Countdown => 1 - islands.phase.percentageLeft,
                 Phase.Horde => 1,
-                Phase.Victory => scene.phase.percentageLeft,
+                Phase.Victory => islands.phase.percentageLeft,
                 _ => 0
             };
 
@@ -69,7 +69,7 @@ namespace LD60.World
 
         void SpawnGoblins()
         {
-            if (scene.phase.phase == Phase.Horde)
+            if (islands.phase.phase == Phase.Horde)
                 if ((goblinSpawnTimer -= ftime) <= 0)
                 {
                     goblinSpawnTimer += GOBLIN_SPAWN_INTERVAL;

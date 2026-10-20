@@ -6,7 +6,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace LD60.World
 {
-    public class Skybox : Component<WorldScene>
+    public class Skybox : Component<DeferredRenderingScene>
     {
         CubeTexture sky;
         ShaderContainer.Entry shader;

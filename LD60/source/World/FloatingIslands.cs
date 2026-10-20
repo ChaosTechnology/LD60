@@ -29,7 +29,7 @@ namespace LD60.World
         bool mustInsertOverlay = true;
 
         public FloatingIslands(Game game)
-            : base (game)
+            : base (game, (int)game.window.width, (int)game.window.height)
         {
             sun = new(
                 deferredShader,

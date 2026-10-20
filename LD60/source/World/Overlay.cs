@@ -22,6 +22,8 @@ namespace LD60.World
         : DialogScene
     {
         public readonly FloatingIslands islands;
+        public readonly ToolRenderer toolRenderer;
+
         readonly SysCol.Dictionary<int, Pickable> registeredPickables = [];
 #if DEBUG
         readonly TextureContainer.Entry pickingPos, pickingNor;
@@ -76,6 +78,8 @@ namespace LD60.World
             panel.CreateControl<Image>(v * 0.8f, v * 0.15f).texture = pickingPos;
             panel.CreateControl<Image>(v * 0.8f - new Vector2f(0, v.y  * 0.32f), v * 0.15f).texture = pickingNor;
 #endif
+
+            toolRenderer = new ToolRenderer(islands, 512);
 
             tools = panel.GetControlById("Tools") as FlowPanel;
             foreach(Type toolType in AssemblyManager.SubTypesOf<Tool>())

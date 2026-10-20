@@ -44,7 +44,7 @@ namespace LD60.World.Tactician.Placables
             animInstancer.AddInstance(
                 rig.GetBoneTransforms(animInstancer.animesh),
                 physics.state.GetTransform(),
-                new Vector4f(((Pickable)this).pickingIndex, scene.overlay.picked == this ? 1 : 0, 0, 0)
+                GetPickingRegister()
                 );
         }
 
@@ -56,7 +56,7 @@ namespace LD60.World.Tactician.Placables
 
         void UpdateState()
         {
-            if (scene.phase.phase == Phase.Horde)
+            if (islands.phase.phase == Phase.Horde)
             {
                 cooldownTimer -= ftime;
                 if (cooldownTimer < 0.5f)

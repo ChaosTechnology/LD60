@@ -34,7 +34,7 @@ namespace LD60.World
 
         public void Collect()
         {
-            scene.inventory.gold += value;
+            islands.inventory.gold += value;
             pickedup = true;
         }
 
@@ -51,7 +51,7 @@ namespace LD60.World
                 if (physics.state.position.y > 1000)
                     Dispose();
             }
-            else if (scene.overlay.picked == this)
+            else if (islands.overlay.picked == this)
                 Collect();
         }
     }

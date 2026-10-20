@@ -8,7 +8,7 @@ using LD60.Tactician;
 
 namespace LD60.World.Tactician
 {
-    using PlacableMeta  = TypeWithAttribute<PlacableAttribute>;
+    using PlacableMeta = TypeWithAttribute<PlacableAttribute>;
 
     public abstract class PlacableTool
         : Tool
@@ -27,10 +27,11 @@ namespace LD60.World.Tactician
         protected void CreatePlacableButtons()
         {
             scene.overlay.subTools.CreateControl<Image>(0, 0.05f).textureSource = string.Empty;
-            foreach(Type it in AssemblyManager.SubTypesOf<Placable>().Where(NotAbstract))
+            foreach (Type it in AssemblyManager.SubTypesOf<Placable>().Where(NotAbstract))
             {
                 Type placable = it;
-                ToolButton btn = scene.overlay.subTools.CreateControl<ToolButton>(0, 0.05f, placable.Name);
+                ToolButton btn = scene.overlay.subTools.CreateControl<ToolButton>(0, 0.05f);
+                btn.texture = scene.overlay.toolRenderer.GetOrCreateImage(placable);
                 ModifyPlacableButton(btn, placable);
 
                 scene.overlay.panel.Layout(); // TODO: Don't
@@ -42,6 +43,5 @@ namespace LD60.World.Tactician
         }
 
         protected abstract void ModifyPlacableButton(ToolButton btn, Type placable);
-
     }
 }

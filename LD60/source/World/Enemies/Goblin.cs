@@ -18,7 +18,7 @@ namespace LD60.World.Enemies
     [Instancing.AnimatedPickableInstancer(666, "models/goblin/goblin.agmdl", "models/goblin/goblin.1.mat")]
     [Instancing.AnimatedPickableInstancer(666, "models/goblin/goblin.agmdl", "models/goblin/goblin.2.mat")]
     [Instancing.AnimatedPickableInstancer(666, "models/goblin/goblin.agmdl", "models/goblin/goblin.3.mat")]
-    public class Goblin : Component<FloatingIslands>, Instancable, Pickable
+    public class Goblin : StandardPickable
     {
         const float MAX_TURNING_RADIANS_PER_SECOND = 2.0f;
 
@@ -34,9 +34,6 @@ namespace LD60.World.Enemies
         float SPEED_KEEP_AHEAD => 1.1f;
         float WALKING_STRENGTH => 4 * physics.state.mass;
 
-
-        public readonly Physical physics;
-
         float ambientNoiseTimer = RandomAmbientTime();
         bool screaming = false;
 
@@ -48,25 +45,22 @@ namespace LD60.World.Enemies
         float walkProgress;
         float facingAngle = 0;
 
-        int Pickable.pickingIndex {get; set;}
-
         public Goblin()
         {
-            physics = new Physical(this);
             physics.shapes.Add(new CapsuleShape(new Vector3f(0, 0.5f, 0), new Vector3f(0, 1, 0), 0.5f));
             physics.state.contactFriction = 0.1f;
+            physics.isStatic = false;
         }
 
-        protected override void Create(CreateParameters _)
+        protected override void Create(CreateParameters cparams)
         {
-            scene.physics.Add(physics);
+            base.Create(cparams);
+
             rig = Rig.FromStream(scene.game.archive.OpenRead("models/goblin/goblin.rig"));
             animation = scene.game.animations.Load("models/goblin/goblin.anim", this);
-            scene.instancers[typeof(Goblin)].instancedThings.Add(this);
-            scene.overlay.Register(this);
 
-            float scaleBase = EaseIn(scene.phase.wave * 0.3f);
-            float speedBase = 0.5f + scene.phase.wave * 0.2f;
+            float scaleBase = EaseIn(islands.phase.wave * 0.3f);
+            float speedBase = 0.5f + islands.phase.wave * 0.2f;
             determination = Random.instance.Rnd(speedBase, speedBase * 1.5f);
             scale = Random.instance.Rnd(1.5f, 1 + scaleBase * scaleBase * 3.0f);
             physics.state.mass = 40.0f * scale;
@@ -75,9 +69,7 @@ namespace LD60.World.Enemies
         public override void SetUpdateCalls()
         {
             base.SetUpdateCalls();
-            scene.updateLayers[(int)UpdateLayers.Move].Add(Move);
             scene.updateLayers[(int)UpdateLayers.Move].Add(Groan);
-            scene.updateLayers[(int)UpdateLayers.PostCollision].Add(ConsiderSuicide);
         }
 
         void Groan()
@@ -85,15 +77,15 @@ namespace LD60.World.Enemies
             if ((ambientNoiseTimer -= ftime) < 0)
             {
                 ambientNoiseTimer = RandomAmbientTime();
-                scene.enemySounds.Play(Sounds.Kind.GoblinAmbient);
+                islands.enemySounds.Play(Sounds.Kind.GoblinAmbient);
             }
         }
 
-        void Move()
+        protected override void Move()
         {
             Vector3f pos = physics.state.position;
             Map.Segment residence = null;
-            foreach (Map.Segment segment in scene.map.EnumerateSegments())
+            foreach (Map.Segment segment in islands.map.EnumerateSegments())
                 foreach(Shape segmentShape in segment.home.content)
                     foreach(Shape homeShape in physics.shapes)
                         if (ChaosFramework.Shapes.Intersection.ConvexHull.CheckIntersection(segmentShape, homeShape) != null)
@@ -157,14 +149,14 @@ namespace LD60.World.Enemies
                         }
                         else
                         {
-                            interesting = scene.hostility.goal;
+                            interesting = islands.hostility.goal;
                         }
 
                         break;
                     }
 
                 default:
-                    interesting = scene.hostility.goal;
+                    interesting = islands.hostility.goal;
                     break;
             }
 
@@ -184,8 +176,10 @@ namespace LD60.World.Enemies
             animation.content["Walk"].SetAnimationData(rig, walkProgress);
         }
 
-        void ConsiderSuicide()
+        protected override void ConsiderSuicide()
         {
+            base.ConsiderSuicide();
+
             foreach (CollisionData collision in physics.currentCollisions)
             {
                 Physical other = collision.p1.creator == this ? collision.p2 : collision.p1;
@@ -196,20 +190,18 @@ namespace LD60.World.Enemies
                             if (damage > 1.0f)
                             {
                                 health -= damage;
-                                scene.enemySounds.Play(Sounds.Kind.GoblinDamage);
+                                islands.enemySounds.Play(Sounds.Kind.GoblinDamage);
                             }
                         }
             }
             if (physics.state.position.y < FloatingIslands.SCREAM_PLANE && !screaming)
             {
                 screaming = true;
-                scene.enemySounds.Play(Sounds.Kind.GoblinFalling);
+                islands.enemySounds.Play(Sounds.Kind.GoblinFalling);
                 DropMoney(10, true);
             }
 
-            if (physics.state.position.y < FloatingIslands.DEATH_PLANE)
-                Dispose();
-            else if (health < 0)
+            if (health < 0)
             {
                 Die();
                 DropMoney(25, false);
@@ -220,7 +212,7 @@ namespace LD60.World.Enemies
         {
             // TODO: fall over and turn into corpse
             Dispose();
-            scene.fire.Explode(physics.state.position, 12, new(1.0f, 1.7f, 0.2f));
+            islands.fire.Explode(physics.state.position, 12, new(1.0f, 1.7f, 0.2f));
         }
 
         void DropMoney(int coinValue, bool autocollect)
@@ -233,25 +225,14 @@ namespace LD60.World.Enemies
                 c.Collect();
         }
 
-        void Instancable.GiveMeInstances(InstancingAttribute[] instancers)
+        public override void GiveMeInstances(InstancingAttribute[] instancers)
         {
             Instancing.AnimatedPickableInstancer animInstancer = (Instancing.AnimatedPickableInstancer)instancers[kind];
             animInstancer.AddInstance(
                 rig.GetBoneTransforms(animInstancer.animesh),
                 physics.state.GetTransform(),
-                new Vector4f(((Pickable)this).pickingIndex, scene.overlay.picked == this ? 1 : 0, 0, 0)
+                GetPickingRegister()
                 );
-        }
-
-        bool Instancable.NeedsInstancedDraw()
-            => true; // TODO: out of screen
-
-        protected override void DoDispose()
-        {
-            base.DoDispose();
-            scene.physics.Remove(physics);
-            scene.instancers[typeof(Goblin)].instancedThings.Remove(this);
-            scene.overlay.Unregister(this);
         }
     }
 }
